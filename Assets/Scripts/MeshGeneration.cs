@@ -18,6 +18,9 @@ public class MeshGeneration : MonoBehaviour
     int[] triangles;
 
 
+    bool generated = false;
+    List<Vertex> convexVertexList = new List<Vertex>();
+
 
     // Start is called before the first frame update
     void Start()
@@ -43,7 +46,34 @@ public class MeshGeneration : MonoBehaviour
 
         CreateShape();
         UpdateMesh();
+    
+        generated = true;    
+        
     }
+
+
+
+    void OnDrawGizmos()
+    {
+        if(!generated)
+            return;
+
+        Gizmos.color = Color.green;
+            Gizmos.DrawSphere(convexVertexList[0].position + Vector3.up, 0.1f);
+        Gizmos.color = Color.white;
+
+
+        //show points along convex hull
+        for (int i = 1; i < convexVertexList.Count; i++)
+		{ 
+			Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(convexVertexList[i].position + Vector3.up, 0.1f);
+			Gizmos.color = Color.white;
+		}
+
+    }
+
+
 
 
 
@@ -52,7 +82,7 @@ public class MeshGeneration : MonoBehaviour
 
         //initalise lists
         List<Vertex> vertexes = new List<Vertex>();
-        List<Vertex> convexVertexList = new List<Vertex>();
+        
         List<Triangle> triangulatedConvexVertexList = new List<Triangle>();
         vertices = new Vector3[activePoints.Count];
         
@@ -70,132 +100,78 @@ public class MeshGeneration : MonoBehaviour
         //get convex hull of points
         convexVertexList = JarvisMarchAlgorithm.GetConvexHull(vertexes);
 
-
         //triangulate convex points
         triangulatedConvexVertexList = Trianglulation.TriangulateConvexPolygon(convexVertexList);
+
+
         
+        for (int i = 0; i < triangulatedConvexVertexList.Count; i++)
+        {
+            Debug.Log("triangulatedConvexVertexList v1 before: " + triangulatedConvexVertexList[i].v1.position);
+            Debug.Log("triangulatedConvexVertexList v2 before: " + triangulatedConvexVertexList[i].v2.position);
+            Debug.Log("triangulatedConvexVertexList v3 before: " + triangulatedConvexVertexList[i].v3.position);
+        }
 
 
+        Debug.Log("triangulatedConvexVertexList size: " + triangulatedConvexVertexList.Count);
 
         //get triangulation of all points
-        List<Triangle> triangleSplittingPoints = new List<Triangle>();
-
-        triangleSplittingPoints = TriangleSplittingAlgorithm.TriangulatePoints(vertexes);
-
+        //List<Triangle> triangleSplittingPoints = new List<Triangle>();
         
-        //int convexSize  = triangulatedConvexVertexList.Count;
-        
+        //triangleSplittingPoints = TriangleSplittingAlgorithm.TriangulatePoints(vertexes);
 
 
         
-        //int count = 0;
-        //convert points from poisson into vertices array
-        //for (int i = 0; i < convexSize - 2; i += 3)
-        //{
-        //    vertices[i] = triangulatedConvexVertexList[count].v1.position;
 
-        //    vertices[i+1] = triangulatedConvexVertexList[count].v2.position;
+        int count = 0;
+        Debug.Log("count: " + count);
 
-        //    vertices[i+2] = triangulatedConvexVertexList[count].v3.position;
+        triangles = new int[triangulatedConvexVertexList.Count * 3];
 
-        //    count++;
+        for (int i = 0; count < triangulatedConvexVertexList.Count; i += 3)
+        {
+            vertices[i    ] = triangulatedConvexVertexList[count].v1.position;
+            vertices[i + 2] = triangulatedConvexVertexList[count].v2.position;
+            vertices[i + 1] = triangulatedConvexVertexList[count].v3.position;
 
-        //}
+            triangles[i    ] = i;
+            triangles[i + 2] = i + 2;
+            triangles[i + 1] = i + 1;
+
+            Debug.Log("triangulatedConvexVertexList v1 after: " + triangulatedConvexVertexList[count].v1.position);
+            Debug.Log("triangulatedConvexVertexList v2 after: " + triangulatedConvexVertexList[count].v2.position);
+            Debug.Log("triangulatedConvexVertexList v3 after: " + triangulatedConvexVertexList[count].v3.position);
 
 
-        //ensure multiple of 3 to make triangles
-        //while(convexSize % 3 != 0)
-        //    convexSize--;
+            count++;
+            Debug.Log("count: " + count);
+        }
 
-
-        //triangles = new int[convexSize];
+        for (int i = 0; i < triangles.Length; i++)
+        {
+            Debug.Log("triangles: " + triangles[i]);
+        }
         
-        Debug.Log("vertices Size: " + vertices.Length);
-
-
-        //if(convexVertexList.Count < 6)
-        //    return;
-
-
-        //for (int i = 0; i < convexVertexList.Count; i++)
-        //{
-        //    vertices[i] = convexVertexList[i].position;
-        //}
-
-
-        vertices[0] = triangleSplittingPoints[0].v1.position;
-        vertices[1] = triangleSplittingPoints[0].v2.position;
-        vertices[2] = triangleSplittingPoints[0].v3.position;
-
-        vertices[3] = triangleSplittingPoints[1].v1.position;
-        vertices[4] = triangleSplittingPoints[1].v2.position;
-        vertices[5] = triangleSplittingPoints[1].v3.position;
-
-        vertices[6] = triangleSplittingPoints[2].v1.position;
-        vertices[7] = triangleSplittingPoints[2].v2.position;
-        vertices[8] = triangleSplittingPoints[2].v3.position;
-
-        vertices[9] = triangleSplittingPoints[3].v1.position;
-        vertices[10] = triangleSplittingPoints[3].v2.position;
-        vertices[11] = triangleSplittingPoints[3].v3.position;
-                                              
-        vertices[12] = triangleSplittingPoints[4].v1.position;
-        vertices[13] = triangleSplittingPoints[4].v2.position;
-        vertices[14] = triangleSplittingPoints[4].v3.position;
-
-
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[0].v1.position);
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[1].v1.position);
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[2].v1.position);
-
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[3].v1.position);
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[4].v1.position);
-        Debug.Log("triangleSplittingPoints 0: " + triangleSplittingPoints[5].v1.position);
-
-
+        
 
         
-        //Debug.Log("Vertices 0: " + vertices[0]);
-        //Debug.Log("Vertices 1: " + vertices[1]);
-        //Debug.Log("Vertices 2: " + vertices[2]);
-        //Debug.Log("Vertices 3: " + vertices[3]);
-        //Debug.Log("Vertices 4: " + vertices[4]);
-        //Debug.Log("Vertices 5: " + vertices[5]);
-        //Debug.Log("Vertices 6: " + vertices[6]);
-        //Debug.Log("Vertices 7: " + vertices[7]);
-        //Debug.Log("Vertices 8: " + vertices[8]);
-        //Debug.Log("Vertices 9: " + vertices[9]);
-        //Debug.Log("Vertices 10: " + vertices[10]);
-        //Debug.Log("Vertices 11: " + vertices[11]);
-        //Debug.Log("Vertices 12: " + vertices[12]);
-        //Debug.Log("Vertices 13: " + vertices[13]);
-        //Debug.Log("Vertices 14: " + vertices[14]);
-
-        //vertices[0] = convexVertexList[0].position;
-        //vertices[1] = convexVertexList[1].position;
-        //vertices[2] = convexVertexList[2].position;
-        //              
-        //vertices[3] = convexVertexList[3].position;
-        //vertices[4] = convexVertexList[4].position;
-        //vertices[5] = convexVertexList[5].position;
-        //
-        //vertices[6] = convexVertexList[6].position;
-        //vertices[7] = convexVertexList[7].position;
-        //vertices[8] = convexVertexList[8].position;
 
 
         //set order of triangles
-        triangles = new int[]
+        //triangles = new int[]
+        //{
+        //    0, 1, 2,
+        //    0, 2, 3,
+        //    0, 3, 4,
+        //    0, 4, 5
+
+        //};
+
+        for (int i = 0; i < triangles.Length; i++)
         {
-            0, 2, 1,
-            1, 3, 2,
-            2, 4, 3,
-            3, 5, 4,
-            4, 6, 5,
-            5, 7, 6,
-
-
-        };
+            Debug.Log("triangles: " + triangles[i]);
+        }
+         
     }
 
 
@@ -203,11 +179,9 @@ public class MeshGeneration : MonoBehaviour
     {
         mesh.Clear();
 
-        mesh.vertices = vertices;
-        Debug.Log("Vertices: " + vertices.Length);
-
-        
+        mesh.vertices = vertices;        
         mesh.triangles = triangles;
+
         mesh.RecalculateNormals();
         
         

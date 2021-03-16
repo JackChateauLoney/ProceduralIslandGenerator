@@ -15,6 +15,14 @@ public class Trianglulation : MonoBehaviour
 		    Vertex b = convexHullpoints[i - 1];
 		    Vertex c = convexHullpoints[i];
 
+			//Debug.Log("i: " + i);
+			//Debug.Log("a: " + a.position);
+			//Debug.Log("b: " + b.position);
+			//Debug.Log("c: " + c.position);
+
+
+
+
 		    triangles.Add(new Triangle(a, b, c));
 	    }
 
