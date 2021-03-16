@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
 public class MeshGeneration : MonoBehaviour
 {
 
@@ -17,10 +17,16 @@ public class MeshGeneration : MonoBehaviour
     Vector3[] vertices;
     int[] triangles;
 
-
     bool generated = false;
-    List<Vertex> convexVertexList = new List<Vertex>();
 
+    //initalise lists
+    List<Vertex> vertexes = new List<Vertex>();
+    List<Vertex> convexVertexList = new List<Vertex>();
+    List<Triangle> triangulatedConvexVertexList = new List<Triangle>();
+
+    List<Triangle> triangleSplittingPoints = new List<Triangle>();
+    List<Triangle> delaunayPoints = new List<Triangle>();
+    
 
     // Start is called before the first frame update
     void Start()
@@ -59,18 +65,26 @@ public class MeshGeneration : MonoBehaviour
             return;
 
         Gizmos.color = Color.green;
-            Gizmos.DrawSphere(convexVertexList[0].position + Vector3.up, 0.1f);
+            Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
         Gizmos.color = Color.white;
 
 
-        //show points along convex hull
-        for (int i = 1; i < convexVertexList.Count; i++)
+        //show points within delaunay
+        for (int i = 1; i < delaunayPoints.Count; i++)
 		{ 
 			Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(convexVertexList[i].position + Vector3.up, 0.1f);
-			Gizmos.color = Color.white;
+            Gizmos.DrawSphere(delaunayPoints[i].v1.position + Vector3.up, 0.1f);
+            Gizmos.DrawSphere(delaunayPoints[i].v2.position + Vector3.up, 0.1f);
+            Gizmos.DrawSphere(delaunayPoints[i].v3.position + Vector3.up, 0.1f);
 		}
 
+        //show points
+        for (int i = 1; i < vertexes.Count; i++)
+		{ 
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
+			Gizmos.color = Color.white;
+        }
     }
 
 
@@ -79,99 +93,77 @@ public class MeshGeneration : MonoBehaviour
 
     void CreateShape()
     {
-
-        //initalise lists
-        List<Vertex> vertexes = new List<Vertex>();
-        
-        List<Triangle> triangulatedConvexVertexList = new List<Triangle>();
-        vertices = new Vector3[activePoints.Count];
-        
-        
-
         for (int i = 0; i < activePoints.Count; i++)
         {
             vertexes.Add(new Vertex(activePoints[i]));
             //convexVertexList.Add(new Vertex(activePoints[i]));
 
-            triangulatedConvexVertexList.Add(new Triangle(new Vertex(Vector3.zero), new Vertex(Vector3.zero), new Vertex(Vector3.zero)));
+            //triangulatedConvexVertexList.Add(new Triangle(new Vertex(Vector3.zero), new Vertex(Vector3.zero), new Vertex(Vector3.zero)));
         }
 
 
         //get convex hull of points
-        convexVertexList = JarvisMarchAlgorithm.GetConvexHull(vertexes);
+        //convexVertexList = JarvisMarchAlgorithm.GetConvexHull(vertexes);
 
         //triangulate convex points
-        triangulatedConvexVertexList = Trianglulation.TriangulateConvexPolygon(convexVertexList);
+        //triangulatedConvexVertexList = Trianglulation.TriangulateConvexPolygon(convexVertexList);
 
-
-        
-        for (int i = 0; i < triangulatedConvexVertexList.Count; i++)
-        {
-            Debug.Log("triangulatedConvexVertexList v1 before: " + triangulatedConvexVertexList[i].v1.position);
-            Debug.Log("triangulatedConvexVertexList v2 before: " + triangulatedConvexVertexList[i].v2.position);
-            Debug.Log("triangulatedConvexVertexList v3 before: " + triangulatedConvexVertexList[i].v3.position);
-        }
-
-
-        Debug.Log("triangulatedConvexVertexList size: " + triangulatedConvexVertexList.Count);
 
         //get triangulation of all points
-        //List<Triangle> triangleSplittingPoints = new List<Triangle>();
-        
         //triangleSplittingPoints = TriangleSplittingAlgorithm.TriangulatePoints(vertexes);
-
+        //
+        //
+        //Debug.Log("triangleSplittingPoints.Count: " + triangleSplittingPoints.Count);
+        //        
+        //vertices = new Vector3[triangleSplittingPoints.Count * 3];
+        //
+        //int count = 0;
+        //triangles = new int[triangleSplittingPoints.Count * 3];
+        //
+        //for (int i = 0; count < triangleSplittingPoints.Count; i += 3)
+        //{
+        //    vertices[i    ] = triangleSplittingPoints[count].v1.position;
+        //    vertices[i + 2] = triangleSplittingPoints[count].v2.position;
+        //    vertices[i + 1] = triangleSplittingPoints[count].v3.position;
+        //
+        //    triangles[i    ] = i;
+        //    triangles[i + 2] = i + 2;
+        //    triangles[i + 1] = i + 1;
+        //
+        //    count++;
+        //}         
 
         
+        
 
+
+
+        //create delaunay triangles
+        delaunayPoints = DelaunayTriangulation.TriangulateByFlippingEdges(activePoints);
+
+
+        //init arrays for drawing mesh
+        vertices = new Vector3[delaunayPoints.Count * 3];
+        triangles = new int[delaunayPoints.Count * 3];
         int count = 0;
-        Debug.Log("count: " + count);
 
-        triangles = new int[triangulatedConvexVertexList.Count * 3];
-
-        for (int i = 0; count < triangulatedConvexVertexList.Count; i += 3)
+        //convert triangles to mesh arrays
+        for (int i = 0; count < delaunayPoints.Count; i += 3)
         {
-            vertices[i    ] = triangulatedConvexVertexList[count].v1.position;
-            vertices[i + 2] = triangulatedConvexVertexList[count].v2.position;
-            vertices[i + 1] = triangulatedConvexVertexList[count].v3.position;
+            vertices[i    ] = delaunayPoints[count].v1.position;
+            vertices[i + 1] = delaunayPoints[count].v2.position;
+            vertices[i + 2] = delaunayPoints[count].v3.position;
 
             triangles[i    ] = i;
             triangles[i + 2] = i + 2;
             triangles[i + 1] = i + 1;
 
-            Debug.Log("triangulatedConvexVertexList v1 after: " + triangulatedConvexVertexList[count].v1.position);
-            Debug.Log("triangulatedConvexVertexList v2 after: " + triangulatedConvexVertexList[count].v2.position);
-            Debug.Log("triangulatedConvexVertexList v3 after: " + triangulatedConvexVertexList[count].v3.position);
-
-
             count++;
-            Debug.Log("count: " + count);
-        }
-
-        for (int i = 0; i < triangles.Length; i++)
-        {
-            Debug.Log("triangles: " + triangles[i]);
-        }
-        
-        
-
-        
+        }     
 
 
-        //set order of triangles
-        //triangles = new int[]
-        //{
-        //    0, 1, 2,
-        //    0, 2, 3,
-        //    0, 3, 4,
-        //    0, 4, 5
 
-        //};
 
-        for (int i = 0; i < triangles.Length; i++)
-        {
-            Debug.Log("triangles: " + triangles[i]);
-        }
-         
     }
 
 
@@ -184,7 +176,10 @@ public class MeshGeneration : MonoBehaviour
 
         mesh.RecalculateNormals();
         
-        
+        //set collisions for mesh
+        GetComponent<MeshCollider>().sharedMesh = null;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+
         
     }
 

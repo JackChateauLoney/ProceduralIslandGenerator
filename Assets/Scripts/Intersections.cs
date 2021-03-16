@@ -450,24 +450,31 @@ public static class Intersections
 
 
 
-    //Is a point p inside a triangle p1-p2-p3?
     //From http://totologic.blogspot.se/2014/01/accurate-point-in-triangle-test.html
-    public static bool IsPointInTriangle(Vector3 p, Vector3 p1, Vector3 p2, Vector3 p3)
+    //p is the testpoint, and the other points are corners in the triangle
+    public static bool IsPointInTriangle(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p)
     {
-        bool isWithinTriangle = false;
+	    bool isWithinTriangle = false;
 
-        float denominator = ((p2.z - p3.z) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.z - p3.z));
+	    //Based on Barycentric coordinates
+	    float denominator = ((p2.y - p3.y) * (p1.x - p3.x) + (p3.x - p2.x) * (p1.y - p3.y));
 
-        float a = ((p2.z - p3.z) * (p.x - p3.x) + (p3.x - p2.x) * (p.z - p3.z)) / denominator;
-        float b = ((p3.z - p1.z) * (p.x - p3.x) + (p1.x - p3.x) * (p.z - p3.z)) / denominator;
-        float c = 1 - a - b;
+	    float a = ((p2.y - p3.y) * (p.x - p3.x) + (p3.x - p2.x) * (p.y - p3.y)) / denominator;
+	    float b = ((p3.y - p1.y) * (p.x - p3.x) + (p1.x - p3.x) * (p.y - p3.y)) / denominator;
+	    float c = 1 - a - b;
 
-        //The point is within the triangle if 0 <= a <= 1 and 0 <= b <= 1 and 0 <= c <= 1
-        if (a >= 0f && a <= 1f && b >= 0f && b <= 1f && c >= 0f && c <= 1f)
-        {
-            isWithinTriangle = true;
-        }
+	    //The point is within the triangle or on the border if 0 <= a <= 1 and 0 <= b <= 1 and 0 <= c <= 1
+	    //if (a >= 0f && a <= 1f && b >= 0f && b <= 1f && c >= 0f && c <= 1f)
+	    //{
+	    //    isWithinTriangle = true;
+	    //}
 
-        return isWithinTriangle;
+	    //The point is within the triangle
+	    if (a > 0f && a < 1f && b > 0f && b < 1f && c > 0f && c < 1f)
+	    {
+		    isWithinTriangle = true;
+	    }
+
+	    return isWithinTriangle;
     }
 }

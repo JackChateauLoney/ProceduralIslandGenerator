@@ -374,6 +374,7 @@ GameObject:
   - component: {fileID: 2106907918}
   - component: {fileID: 2106907921}
   - component: {fileID: 2106907922}
+  - component: {fileID: 2106907923}
   m_Layer: 0
   m_Name: MeshGenerator
   m_TagString: Untagged
@@ -469,3 +470,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: []
+--- !u!64 &2106907923
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106907917}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}

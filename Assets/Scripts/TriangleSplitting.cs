@@ -17,6 +17,10 @@ public static class TriangleSplittingAlgorithm
         //Add the remaining points and split the triangles
         for (int i = 0; i < points.Count; i++)
         {
+
+            
+
+
             Vertex currentPoint = points[i];
             
             //2d space
@@ -33,6 +37,7 @@ public static class TriangleSplittingAlgorithm
 
                 if (Intersections.IsPointInTriangle(p1, p2, p3, p))
                 {
+                                    
                     //Create 3 new triangles
                     Triangle t1 = new Triangle(t.v1, t.v2, currentPoint);
                     Triangle t2 = new Triangle(t.v2, t.v3, currentPoint);
