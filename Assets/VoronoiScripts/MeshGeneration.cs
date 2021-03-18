@@ -27,6 +27,8 @@ public class MeshGeneration : MonoBehaviour
     List<Triangle> triangleSplittingPoints = new List<Triangle>();
     List<Triangle> delaunayPoints = new List<Triangle>();
     
+    List<VoronoiCell> voronoiCells;
+    VoronoiController voronoiController = null;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,7 @@ public class MeshGeneration : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
+        voronoiController = new VoronoiController();
 
         pds = GetComponent<PoissonDiscSampling>();
         points = pds.points;
@@ -85,6 +88,8 @@ public class MeshGeneration : MonoBehaviour
             Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
 			Gizmos.color = Color.white;
         }
+
+        voronoiController.DisplayVoronoiCells(voronoiCells);
     }
 
 
@@ -147,6 +152,8 @@ public class MeshGeneration : MonoBehaviour
         triangles = new int[delaunayPoints.Count * 3];
         int count = 0;
 
+        List<Vector3> sites = new List<Vector3>();
+
         //convert triangles to mesh arrays
         for (int i = 0; count < delaunayPoints.Count; i += 3)
         {
@@ -158,12 +165,19 @@ public class MeshGeneration : MonoBehaviour
             triangles[i + 2] = i + 2;
             triangles[i + 1] = i + 1;
 
+            sites.Add(delaunayPoints[count].v1.position);
+            sites.Add(delaunayPoints[count].v2.position);
+            sites.Add(delaunayPoints[count].v3.position);
+
             count++;
         }     
 
+        
 
+        voronoiCells = DelaunayToVoronoi.GenerateVoronoiDiagram(sites);
+        
 
-
+        
     }
 
 
