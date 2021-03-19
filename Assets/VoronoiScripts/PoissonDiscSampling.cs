@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class PoissonDiscSampling : MonoBehaviour
 {
-
+	[SerializeField] int rVal = 4;
+	[SerializeField] int kVal = 60;
+	[SerializeField] int widthVal = 50;
+	[SerializeField] int heightVal = 50;
 	public List<Vector3> points;
 	List<Vector3> grid;
 	List<Vector3> active;
@@ -29,7 +32,7 @@ public class PoissonDiscSampling : MonoBehaviour
 			grid.Add(new Vector3(0,0,0));
         }
 
-        points = PoissonDiscSample(4, 60, 50, 50);
+        points = PoissonDiscSample(rVal, kVal, widthVal, heightVal);
 
     }
 

@@ -12,52 +12,52 @@ public class VoronoiController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        //Generate the random sites
-        List<Vector3> randomSites = new List<Vector3>();
+        ////Generate the random sites
+        //List<Vector3> randomSites = new List<Vector3>();
 
-        //Generate random numbers with a seed
-        Random.InitState(seed);
+        ////Generate random numbers with a seed
+        //Random.InitState(seed);
 
-        float max = halfMapSize;
-        float min = -halfMapSize;
+        //float max = halfMapSize;
+        //float min = -halfMapSize;
 
-        for (int i = 0; i < numberOfPoints; i++)
-        {
-            float randomX = Random.Range(min, max);
-            float randomZ = Random.Range(min, max);
+        //for (int i = 0; i < numberOfPoints; i++)
+        //{
+        //    float randomX = Random.Range(min, max);
+        //    float randomZ = Random.Range(min, max);
 
-            randomSites.Add(new Vector3(randomX, 0f, randomZ));
-        }
-
-
-        //Points outside of the screen for voronoi which has some cells that are infinite
-        float bigSize = halfMapSize * 5f;
-
-        //Star shape which will give a better result when a cell is infinite large
-        //When using other shapes, some of the infinite cells misses triangles
-        randomSites.Add(new Vector3(0f, 0f, bigSize));
-        randomSites.Add(new Vector3(0f, 0f, -bigSize));
-        randomSites.Add(new Vector3(bigSize, 0f, 0f));
-        randomSites.Add(new Vector3(-bigSize, 0f, 0f));
+        //    randomSites.Add(new Vector3(randomX, 0f, randomZ));
+        //}
 
 
-        //Generate the voronoi diagram
-        List<VoronoiCell> cells = DelaunayToVoronoi.GenerateVoronoiDiagram(randomSites);
+        ////Points outside of the screen for voronoi which has some cells that are infinite
+        //float bigSize = halfMapSize * 5f;
+
+        ////Star shape which will give a better result when a cell is infinite large
+        ////When using other shapes, some of the infinite cells misses triangles
+        //randomSites.Add(new Vector3(0f, 0f, bigSize));
+        //randomSites.Add(new Vector3(0f, 0f, -bigSize));
+        //randomSites.Add(new Vector3(bigSize, 0f, 0f));
+        //randomSites.Add(new Vector3(-bigSize, 0f, 0f));
 
 
-        //Debug
-        //Display the voronoi diagram
-        DisplayVoronoiCells(cells);
+        ////Generate the voronoi diagram
+        //List<VoronoiCell> cells = DelaunayToVoronoi.GenerateVoronoiDiagram(randomSites);
 
-        //Display the sites
-        Gizmos.color = Color.white;
 
-        for (int i = 0; i < randomSites.Count; i++)
-        {
-            float radius = 0.2f;
+        ////Debug
+        ////Display the voronoi diagram
+        //DisplayVoronoiCells(cells);
 
-            Gizmos.DrawSphere(randomSites[i], radius);
-        }
+        ////Display the sites
+        //Gizmos.color = Color.white;
+
+        //for (int i = 0; i < randomSites.Count; i++)
+        //{
+        //    float radius = 0.2f;
+
+        //    Gizmos.DrawSphere(randomSites[i], radius);
+        //}
     }
 
     //Display the voronoi diagram with mesh
@@ -69,7 +69,7 @@ public class VoronoiController : MonoBehaviour
 
             Vector3 p1 = c.sitePos;
 
-            Gizmos.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
+            //Gizmos.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
 
             List<Vector3> vertices = new List<Vector3>();
 
@@ -98,7 +98,7 @@ public class VoronoiController : MonoBehaviour
 
             triangleMesh.RecalculateNormals();
 
-            Gizmos.DrawMesh(triangleMesh);
+            //Gizmos.DrawMesh(triangleMesh);
         }
     }
 }
