@@ -31,8 +31,5 @@ public class CellCollisions : MonoBehaviour
 
         voronoiParent = transform.parent.GetComponent<MeshGeneration>().voronoiParent;
         transform.parent = voronoiParent.transform;
-        Debug.Log("set parent");
-
     }
-
 }

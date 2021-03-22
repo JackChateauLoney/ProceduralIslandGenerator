@@ -184,10 +184,14 @@ public class MeshGeneration : MonoBehaviour
         List<Vector3> fullVoronoivertices = new List<Vector3>();
         List<int> fullVoronoitriangles = new List<int>();
 
+
         for (int i = 0; i < cells.Count; i++)
         {
             VoronoiCell c = cells[i];
             Vector3 p1 = c.sitePos;
+
+
+            
 
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();

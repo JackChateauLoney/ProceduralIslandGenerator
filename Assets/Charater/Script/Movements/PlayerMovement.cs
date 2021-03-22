@@ -6,10 +6,6 @@ namespace Script.Movements
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerMovement : MonoBehaviour
     {
-        //Serialized variables
-        [Header("Camera")]
-        [SerializeField] private Camera mainCam = null;
-
         [Header("Ground surfaces")]
         [SerializeField] private LayerMask groundMask = ~0;
 

@@ -51,7 +51,6 @@ public class CarController : MonoBehaviour
         sphere.AddForce(Vector3.down * gravity, ForceMode.Acceleration);
 
         //steering
-        Debug.Log("currentRotate" + currentRotate);
         transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, new Vector3(0, transform.eulerAngles.y + currentRotate, 0), Time.deltaTime * 5.0f);
 
         RaycastHit hitNear;
