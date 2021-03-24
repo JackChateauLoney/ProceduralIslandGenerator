@@ -40,6 +40,9 @@ public class MeshGeneration : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        voronoiMeshes.Clear();
+
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -118,6 +121,14 @@ public class MeshGeneration : MonoBehaviour
         delaunayPoints = DelaunayTriangulation.TriangulateByFlippingEdges(activePoints);
 
 
+        for (int i = 0; i < delaunayPoints.Count; i++)
+        {
+            delaunayPoints[i].v1.position.y += Random.Range(0, 4);
+            delaunayPoints[i].v2.position.y += Random.Range(0, 4);
+            delaunayPoints[i].v3.position.y += Random.Range(0, 4);
+        }
+
+
         //init arrays for drawing mesh
         vertices = new Vector3[delaunayPoints.Count * 3];
         triangles = new int[delaunayPoints.Count * 3];
@@ -180,10 +191,7 @@ public class MeshGeneration : MonoBehaviour
     //Display the voronoi diagram with mesh
     public void DisplayVoronoiCells(List<VoronoiCell> cells)
     {
-        Mesh fullVoronoiMesh = new Mesh();
         List<Vector3> fullVoronoivertices = new List<Vector3>();
-        List<int> fullVoronoitriangles = new List<int>();
-
 
         for (int i = 0; i < cells.Count; i++)
         {
@@ -199,8 +207,6 @@ public class MeshGeneration : MonoBehaviour
             vertices.Add(p1);
             fullVoronoivertices.Add(p1);
 
-            //Gizmos.color = gizmoColours[i];
-
             for (int j = 0; j < c.edges.Count; j++)
             {
                 Vector3 p3 = c.edges[j].v1;
@@ -215,9 +221,6 @@ public class MeshGeneration : MonoBehaviour
                 triangles.Add(vertices.Count - 2);
                 triangles.Add(vertices.Count - 1);
 
-                fullVoronoitriangles.Add(0);
-                fullVoronoitriangles.Add(vertices.Count - 2);
-                fullVoronoitriangles.Add(vertices.Count - 1);
             }
 
             Mesh triangleMesh = new Mesh();
@@ -230,7 +233,6 @@ public class MeshGeneration : MonoBehaviour
 
             triangleMesh.RecalculateNormals();
 
-            //Gizmos.DrawMesh(triangleMesh);
             voronoiMeshes.Add(triangleMesh);
         }
 

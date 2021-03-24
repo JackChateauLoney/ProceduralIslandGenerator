@@ -322,13 +322,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.4099998, z: -8.559998}
+  m_LocalRotation: {x: 0.09214132, y: -0, z: -0, w: 0.995746}
+  m_LocalPosition: {x: 0, y: 5.64, z: -10.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1768589131}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10.574, y: 0, z: 0}
 --- !u!1 &1160183796
 GameObject:
   m_ObjectHideFlags: 0
@@ -513,7 +513,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1191508263}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 500, y: 0, z: 500}
+  m_LocalPosition: {x: 1200, y: 0, z: 1200}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -543,7 +543,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1291495523}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1750, y: 0, z: 1750}
+  m_LocalPosition: {x: 3500, y: 0, z: 3500}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -612,7 +612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8f25afbee8dd5642927b025f770407f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  power: 12
+  power: 8
   scale: 1
   timeScale: 0.5
 --- !u!114 &1763826635
@@ -627,8 +627,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3910c607afcd18948bd09cd6d46b6fb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1024
-  gridSize: 128
+  size: 4096
+  gridSize: 256
 --- !u!23 &1763826636
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -686,7 +686,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1763826633}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 2000, y: 30, z: 2000}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -714,15 +714,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1127012953772139370, guid: d4ddc83b8731e3143987d2cf3b239c54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 818.16
+      value: 1619
       objectReference: {fileID: 0}
     - target: {fileID: 1127012953772139370, guid: d4ddc83b8731e3143987d2cf3b239c54, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 40
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1127012953772139370, guid: d4ddc83b8731e3143987d2cf3b239c54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 773
+      value: 1708
       objectReference: {fileID: 0}
     - target: {fileID: 1127012953772139370, guid: d4ddc83b8731e3143987d2cf3b239c54, type: 3}
       propertyPath: m_LocalRotation.w
@@ -855,7 +855,7 @@ MonoBehaviour:
   bottomRight: {fileID: 1291495524}
   voronoiParent: {fileID: 480358378}
   terrainShader: {fileID: 2100000, guid: d0c8e5c0be0f8f04f9ebd0fc9eb99f25, type: 2}
-  halfMapSize: 1000
+  halfMapSize: 2000
   generated: 0
   meshPrefabV: {fileID: 981745377537791640, guid: 48a9a715be96f5c4eb21f837604341b9, type: 3}
 --- !u!114 &2106907922
@@ -872,8 +872,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rVal: 200
   kVal: 60
-  widthVal: 2000
-  heightVal: 2000
+  widthVal: 4000
+  heightVal: 4000
   points: []
 --- !u!64 &2106907923
 MeshCollider:
