@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//[RequireComponent(typeof(PathCreator))]
-[RequireComponent(typeof(MeshFilter),typeof(MeshRenderer))]
+[RequireComponent(typeof(PathCreator),typeof(MeshFilter),typeof(MeshRenderer))]
 public class RoadCreator : MonoBehaviour
 {
 
     [Range(0.5f, 1.5f), SerializeField] float spacing = 1f;
     [SerializeField] float roadWidth = 1;
-
+    public bool autoUpdate;
 
     public void UpdateRoad()
     {
-        //Path path = GetComponent<PathCreator>().path;
-        //Vector2[] points = path.CalculateEvenlySpacedPoints(spacing);
-        //GetComponent<MeshFilter>().mesh = CreateRoadMesh(points);
+        Path path = GetComponent<PathCreator>().path;
+        Vector2[] points = path.CalculateEvenlySpacedPoints(spacing);
+        GetComponent<MeshFilter>().mesh = CreateRoadMesh(points);
 
     }
 
