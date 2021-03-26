@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class CellCollisions : MonoBehaviour
 {
-
     Transform topLeft = null;
     Transform bottomRight = null;
     GameObject voronoiParent = null;
 
-    // Start is called before the first frame update
-    void Start()
+
+
+    public void Init()
     {
         //get defined area
         topLeft = transform.parent.GetComponent<MeshGeneration>().topLeft;

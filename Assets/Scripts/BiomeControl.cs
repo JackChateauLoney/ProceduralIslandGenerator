@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BiomeControl : MonoBehaviour
 {
-    enum BiomeType
+    public enum BiomeType
     {
         Grassland,
         Forest,
@@ -13,4 +13,10 @@ public class BiomeControl : MonoBehaviour
         Mountain,
         Water
     };
+
+    public BiomeType brushType = BiomeType.Grassland;
+
+
+    public Material grassMaterial = null;
+    public Material fieldMaterial = null;
 }

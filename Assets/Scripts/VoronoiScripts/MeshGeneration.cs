@@ -245,6 +245,23 @@ public class MeshGeneration : MonoBehaviour
             newMesh.GetComponent<MeshCollider>().sharedMesh = null;
             newMesh.GetComponent<MeshCollider>().sharedMesh = voronoiMeshes[i];
             newMesh.GetComponent<Renderer>().material = terrainShader;
+            newMesh.GetComponent<CellCollisions>().Init();
+
+            int randType = Random.Range(0,10);
+            if(randType == 0 || randType == 1 || randType == 2|| randType == 3|| randType == 4) 
+                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Grassland;
+            else if(randType == 5)
+                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Forest;
+            else if(randType == 6)
+                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Town;
+            else if(randType == 7)
+                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Field;
+            else 
+                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Blank;
+
+
+            newMesh.GetComponent<RegionBiome>().GenerateBiome();
+           
         }
     }
 }
