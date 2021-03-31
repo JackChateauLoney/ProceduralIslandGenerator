@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[RequireComponent(typeof(MeshFilter),typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class WaterPlaneGenerator : MonoBehaviour
 {
     [SerializeField] float size = 1f;
@@ -19,7 +19,7 @@ public class WaterPlaneGenerator : MonoBehaviour
 
     Mesh GenerateMesh()
     {
-        
+
         Mesh mesh = new Mesh();
 
         List<Vector3> vertices = new List<Vector3>();
@@ -32,7 +32,9 @@ public class WaterPlaneGenerator : MonoBehaviour
             for (int y = 0; y < gridSize + 1; y++)
             {
                 vertices.Add(new Vector3(-size * 0.5f + size * (x / ((float)gridSize)), 0, -size * 0.5f + size * (y / ((float)gridSize))));
-                normals.Add(Vector3.up);
+                //normals.Add(Vector3.up);
+                //randomise normals to give more depth
+                normals.Add(new Vector3(Random.Range(0f, 0.3f), 1, Random.Range(0f, 0.3f)));
                 uvs.Add(new Vector2(x / (float)gridSize, y / (float)gridSize));
             }
         }
@@ -43,14 +45,14 @@ public class WaterPlaneGenerator : MonoBehaviour
         int vertCount = gridSize + 1;
         for (int i = 0; i < vertCount * vertCount - vertCount; i++)
         {
-            if((i + 1) % vertCount == 0)
+            if ((i + 1) % vertCount == 0)
             {
                 continue;
             }
 
             triangles.AddRange(new List<int>()
             {
-                i + 1 + vertCount, i + vertCount, i, 
+                i + 1 + vertCount, i + vertCount, i,
                 i, i + 1, i + vertCount + 1
             });
         }

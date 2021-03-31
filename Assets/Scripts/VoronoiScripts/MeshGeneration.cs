@@ -29,7 +29,7 @@ public class MeshGeneration : MonoBehaviour
     //initalise lists
     List<Vertex> vertexes = new List<Vertex>();
     List<Triangle> delaunayPoints = new List<Triangle>();
-    
+
     List<VoronoiCell> voronoiCells;
 
     Color[] gizmoColours = new Color[100];
@@ -54,23 +54,23 @@ public class MeshGeneration : MonoBehaviour
 
         //only take the points that are not at 0
         for (int i = 0; i < points.Count; i++)
-            if(points[i] != Vector3.zero)
+            if (points[i] != Vector3.zero)
                 activePoints.Add(points[i]);
 
 
 
         for (int i = 0; i < gizmoColours.Length; i++)
             gizmoColours[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
-        
 
 
-            
+
+
 
         CreateShape();
         UpdateMesh();
-    
-        generated = true;    
-        
+
+        generated = true;
+
         DisplayVoronoiCells(voronoiCells);
     }
 
@@ -78,32 +78,32 @@ public class MeshGeneration : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if(!generated)
+        if (!generated)
             return;
 
         Gizmos.color = Color.green;
-            Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
+        Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
         Gizmos.color = Color.white;
 
 
         //show points within delaunay
         for (int i = 1; i < delaunayPoints.Count; i++)
-		{ 
-			Gizmos.color = Color.yellow;
+        {
+            Gizmos.color = Color.yellow;
             Gizmos.DrawSphere(delaunayPoints[i].v1.position + Vector3.up, 0.1f);
             Gizmos.DrawSphere(delaunayPoints[i].v2.position + Vector3.up, 0.1f);
             Gizmos.DrawSphere(delaunayPoints[i].v3.position + Vector3.up, 0.1f);
-		}
+        }
 
         //show points
         for (int i = 1; i < vertexes.Count; i++)
-		{ 
+        {
             Gizmos.color = Color.blue;
             Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
-			Gizmos.color = Color.white;
+            Gizmos.color = Color.white;
         }
 
-        
+
     }
 
 
@@ -114,8 +114,8 @@ public class MeshGeneration : MonoBehaviour
     {
         for (int i = 0; i < activePoints.Count; i++)
             vertexes.Add(new Vertex(activePoints[i]));
-        
-   
+
+
 
         //create delaunay triangles
         delaunayPoints = DelaunayTriangulation.TriangulateByFlippingEdges(activePoints);
@@ -139,11 +139,11 @@ public class MeshGeneration : MonoBehaviour
         //convert triangles to mesh arrays
         for (int i = 0; count < delaunayPoints.Count; i += 3)
         {
-            vertices[i    ] = delaunayPoints[count].v1.position;
+            vertices[i] = delaunayPoints[count].v1.position;
             vertices[i + 1] = delaunayPoints[count].v2.position;
             vertices[i + 2] = delaunayPoints[count].v3.position;
 
-            triangles[i    ] = i;
+            triangles[i] = i;
             triangles[i + 2] = i + 2;
             triangles[i + 1] = i + 1;
 
@@ -152,7 +152,7 @@ public class MeshGeneration : MonoBehaviour
             sites.Add(delaunayPoints[count].v3.position);
 
             count++;
-        }     
+        }
 
         //Points outside of the screen for voronoi which has some cells that are infinite
         float bigSize = halfMapSize * 5f;
@@ -165,9 +165,9 @@ public class MeshGeneration : MonoBehaviour
         sites.Add(new Vector3(-bigSize, 0f, 0f));
 
         voronoiCells = DelaunayToVoronoi.GenerateVoronoiDiagram(sites);
-        
 
-        
+
+
     }
 
 
@@ -175,16 +175,16 @@ public class MeshGeneration : MonoBehaviour
     {
         mesh.Clear();
 
-        mesh.vertices = vertices;        
+        mesh.vertices = vertices;
         mesh.triangles = triangles;
 
         mesh.RecalculateNormals();
-        
+
         //set collisions for mesh
         GetComponent<MeshCollider>().sharedMesh = null;
         GetComponent<MeshCollider>().sharedMesh = mesh;
 
-        
+
     }
 
 
@@ -199,7 +199,7 @@ public class MeshGeneration : MonoBehaviour
             Vector3 p1 = c.sitePos;
 
 
-            
+
 
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
@@ -247,21 +247,32 @@ public class MeshGeneration : MonoBehaviour
             newMesh.GetComponent<Renderer>().material = terrainShader;
             newMesh.GetComponent<CellCollisions>().Init();
 
-            int randType = Random.Range(0,10);
-            if(randType == 0 || randType == 1 || randType == 2|| randType == 3|| randType == 4) 
-                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Grassland;
-            else if(randType == 5)
-                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Forest;
-            else if(randType == 6)
-                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Town;
-            else if(randType == 7)
-                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Field;
-            else 
-                newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Blank;
+            DistributeBiomes(newMesh);
 
 
             newMesh.GetComponent<RegionBiome>().GenerateBiome();
-           
+
         }
     }
+
+
+
+
+    void DistributeBiomes(GameObject newMesh)
+    {
+        int randType = Random.Range(0, 10);
+        if (randType == 0 || randType == 1 || randType == 2 || randType == 3 || randType == 4)
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Grassland;
+        else if (randType == 5)
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Forest;
+        else if (randType == 6)
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Town;
+        else if (randType == 7)
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Field;
+        else
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Blank;
+
+    }
+
+
 }

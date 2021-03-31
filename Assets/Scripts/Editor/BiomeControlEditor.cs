@@ -17,6 +17,10 @@ public class BiomeControlEditor : Editor
 
     }
 
+    private void OnEnable()
+    {
+        controller = (BiomeControl)target;
+    }
 
     private void OnSceneGUI()
     {
@@ -31,10 +35,31 @@ public class BiomeControlEditor : Editor
         Vector2 mousePos = HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition).origin;
 
         //shift left click
-        if(guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && guiEvent.shift)
+        if (guiEvent.type == EventType.MouseDown && guiEvent.button == 0 && guiEvent.shift)
         {
+            RaycastHit hit;
 
-            
+            if (Physics.Raycast(HandleUtility.GUIPointToWorldRay(guiEvent.mousePosition), out hit))
+            {
+                if (hit.transform.parent.name == "VoronoiParent")
+                {
+                    Debug.Log("clicked on: " + hit.transform.name);
+
+                    //change clicked biome to brush type and regenerate it
+                    if (hit.transform.GetComponent<RegionBiome>())
+                    {
+                        hit.transform.GetComponent<RegionBiome>().myBiome = controller.brushType;
+                        hit.transform.GetComponent<RegionBiome>().GenerateBiome();
+                    }
+                    else
+                        Debug.Log("No region biome script attached to clicked object");
+
+
+
+
+                }
+            }
+
 
         }
 
@@ -55,7 +80,7 @@ public class BiomeControlEditor : Editor
         //        Handles.DrawLine(points[1], points[0]);
         //        Handles.DrawLine(points[2], points[3]); 
         //    }
-            
+
         //    Color segmentCol = (i == selectedSegmentIndex && Event.current.shift) ? controller.selectedSegmentCol : controller.segmentCol;
         //    Handles.DrawBezier(points[0], points[3], points[1], points[2], segmentCol, null, 2);
         //}
@@ -76,8 +101,8 @@ public class BiomeControlEditor : Editor
         //            Path.MovePoint(i, newPos);
         //        }
         //    }
-            
+
         //}
-    
+
     }
 }
