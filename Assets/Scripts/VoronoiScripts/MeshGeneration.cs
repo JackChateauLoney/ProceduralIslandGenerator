@@ -14,8 +14,15 @@ public class MeshGeneration : MonoBehaviour
     [SerializeField] Material terrainShader = null;
     [SerializeField] float halfMapSize = 10f;
 
-    [SerializeField] const int sizeX = 50;
-    [SerializeField] const int sizeY = 50;
+    [Header("Biome chances, should add up to 100")]
+    [SerializeField] int grasslandChance = 50;
+    [SerializeField] int forestChance = 30;
+    [SerializeField] int fieldChance = 10;
+    [SerializeField] int townChance = 5;
+    [SerializeField] int mountainChance = 5;
+
+    [SerializeField] int islandWidth = 4000;
+    [SerializeField] int islandLength = 4000;
     PoissonDiscSampling pds = null;
     List<Vector3> points;
     List<Vector3> activePoints;
@@ -46,8 +53,9 @@ public class MeshGeneration : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
-        pds = GetComponent<PoissonDiscSampling>();
-        points = pds.points;
+        //pds = GetComponent<PoissonDiscSampling>();
+        pds = new PoissonDiscSampling();
+        points = pds.GeneratePoints(200, 60, islandWidth, islandLength, 0, 0);
 
 
         activePoints = new List<Vector3>();
@@ -247,6 +255,9 @@ public class MeshGeneration : MonoBehaviour
             newMesh.GetComponent<Renderer>().material = terrainShader;
             newMesh.GetComponent<CellCollisions>().Init();
 
+
+
+
             DistributeBiomes(newMesh);
 
 
@@ -260,15 +271,20 @@ public class MeshGeneration : MonoBehaviour
 
     void DistributeBiomes(GameObject newMesh)
     {
-        int randType = Random.Range(0, 10);
-        if (randType == 0 || randType == 1 || randType == 2 || randType == 3 || randType == 4)
+        //random percentage
+        int randType = Random.Range(0, 100);
+
+        //check based on ranges set by user
+        if (randType <= grasslandChance) //grassland
             newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Grassland;
-        else if (randType == 5)
+        else if (randType <= grasslandChance + forestChance) //forest
             newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Forest;
-        else if (randType == 6)
-            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Town;
-        else if (randType == 7)
+        else if (randType <= grasslandChance + forestChance + fieldChance) //field
             newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Field;
+        else if (randType <= grasslandChance + forestChance + fieldChance + townChance) //town
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Town;
+        else if (randType <= grasslandChance + forestChance + fieldChance + townChance + mountainChance) //mountain
+            newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Mountain;
         else
             newMesh.GetComponent<RegionBiome>().myBiome = RegionBiome.BiomeType.Blank;
 

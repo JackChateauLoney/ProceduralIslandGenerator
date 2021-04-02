@@ -25,6 +25,9 @@ public class RegionBiome : MonoBehaviour
     [SerializeField] int treeSpacing = 1;
     [SerializeField] int treeK = 30;
     [SerializeField] GameObject treePrefab = null;
+    List<Vector3> randPoints = new List<Vector3>();
+    List<GameObject> newTrees = new List<GameObject>();
+
 
     [Header("Field")]
     [SerializeField] GameObject fieldDirtPrefab = null;
@@ -46,15 +49,15 @@ public class RegionBiome : MonoBehaviour
         foreach (var item in vertices)
         {
             //get width
-            if(item.x > XregionMax)
+            if (item.x > XregionMax)
                 XregionMax = (int)item.x;
-            if(item.x < XregionMin)
+            if (item.x < XregionMin)
                 XregionMin = (int)item.x;
-            
+
             //get height
-            if(item.z > ZregionMax)
+            if (item.z > ZregionMax)
                 ZregionMax = (int)item.z;
-            if(item.z < ZregionMin)
+            if (item.z < ZregionMin)
                 ZregionMin = (int)item.z;
         }
 
@@ -64,31 +67,31 @@ public class RegionBiome : MonoBehaviour
             case BiomeType.Blank:
                 break;
             case BiomeType.Grassland:
-            {
-                GenerateGrassland();
-                break;
-            }
+                {
+                    GenerateGrassland();
+                    break;
+                }
             case BiomeType.Forest:
-            {
-                GenerateForest();
-                break;
-            }
+                {
+                    GenerateForest();
+                    break;
+                }
             case BiomeType.Field:
-            {
-                GenerateField();
-                break;
-            }
+                {
+                    GenerateField();
+                    break;
+                }
             case BiomeType.Town:
-            {
-                GenerateTown();
-                break;
-            }
+                {
+                    GenerateTown();
+                    break;
+                }
             case BiomeType.Mountain:
                 break;
             default:
                 break;
         }
-        
+
     }
 
 
@@ -101,7 +104,7 @@ public class RegionBiome : MonoBehaviour
         GameObject grassLayer = Instantiate(gameObject, transform);
         grassLayer.transform.localPosition = Vector3.zero;
         grassLayer.GetComponent<MeshRenderer>().material = regionMat;
-    
+
     }
 
     void GenerateField()
@@ -113,42 +116,68 @@ public class RegionBiome : MonoBehaviour
 
     void GenerateForest()
     {
-        //PoissonDiscSampling pds = new PoissonDiscSampling();
+        PoissonDiscSampling pds = new PoissonDiscSampling();
 
-        //List<Vector3> points = pds.PoissonDiscSample(treeSpacing, treeK, XregionMax, ZregionMax);
+        Vector3 centrePoint = GetComponent<MeshFilter>().mesh.vertices[0];
 
-        GameObject newTree = Instantiate(treePrefab, transform);
-        newTree.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
-        newTree.transform.position = new Vector3(newTree.transform.position.x , 55, newTree.transform.position.z);
-        StartCoroutine(FreezeObject(newTree));
+        List<Vector3> points = pds.GeneratePoints(treeSpacing, treeK, 100, 100, (int)centrePoint.x, (int)centrePoint.z);
+        List<Vector3> treePoints = new List<Vector3>();
 
-        for (int i = 0; i < 300; i++)
+        for (int i = 0; i < points.Count; i++)
         {
-            GameObject tempTree = Instantiate(treePrefab, transform);
-            tempTree.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
-            tempTree.transform.position = new Vector3(newTree.transform.position.x + Random.Range(-80, 80) , 55, newTree.transform.position.z + Random.Range(-80, 80));
-            tempTree.transform.Rotate(new Vector3(0, Random.Range(0f,1f), 0));
-            StartCoroutine(FreezeObject(tempTree));
+            if(points[i] == Vector3.zero)
+            {
+                treePoints.Add(points[i]);
+                Debug.Log(transform.name + " treePoints: " + treePoints[i]);
+            }
+        }
+
+        
+
+
+        for (int i = 0; i < Mathf.Min(3, points.Count); i++)
+        {
+            points[i] += centrePoint + Vector3.up * 60;
+        }
+
+
+        for (int i = 0; i < Mathf.Min(3, points.Count); i++)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(points[i], Vector3.down * 100, out hit, 100f))
+            {
+                points[i] = hit.point;
+
+                GameObject newTree = Instantiate(treePrefab, transform);
+                newTree.transform.position = points[i];
+                newTree.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                newTree.transform.position += transform.up * 1.3f;
+                //newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+
+                float randomScale = Random.Range(0.7f, 1f);
+                newTree.transform.localScale = new Vector3(randomScale, randomScale, 1);
+                newTrees.Add(newTree);
+                Debug.Log("Tree spawned: " + newTree.transform.position);
+            }
         }
 
     }
-
 
 
     void GenerateTown()
     {
         GameObject newCenterObject = Instantiate(centerObjectPrefab, transform);
         newCenterObject.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
-        newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x , 55, newCenterObject.transform.position.z);
+        newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x, 55, newCenterObject.transform.position.z);
         StartCoroutine(FreezeObject(newCenterObject));
-    
+
 
         for (int i = 0; i < 10; i++)
         {
             GameObject tempBuilding = Instantiate(buildingPrefab, transform);
             tempBuilding.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
-            tempBuilding.transform.position = new Vector3(tempBuilding.transform.position.x + Random.Range(-80, 80) , 55, tempBuilding.transform.position.z + Random.Range(-80, 80));
-            tempBuilding.transform.Rotate(new Vector3(0, Random.Range(0f,1f), 0));
+            tempBuilding.transform.position = new Vector3(tempBuilding.transform.position.x + Random.Range(-80, 80), 55, tempBuilding.transform.position.z + Random.Range(-80, 80));
+            tempBuilding.transform.Rotate(new Vector3(0, Random.Range(0f, 1f), 0));
             StartCoroutine(FreezeObject(tempBuilding));
         }
     }

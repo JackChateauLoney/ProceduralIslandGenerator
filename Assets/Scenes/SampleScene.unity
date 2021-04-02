@@ -800,7 +800,6 @@ GameObject:
   - component: {fileID: 2106907919}
   - component: {fileID: 2106907918}
   - component: {fileID: 2106907921}
-  - component: {fileID: 2106907922}
   - component: {fileID: 2106907923}
   - component: {fileID: 2106907924}
   m_Layer: 0
@@ -890,25 +889,15 @@ MonoBehaviour:
   voronoiParent: {fileID: 480358378}
   terrainShader: {fileID: 2100000, guid: d0c8e5c0be0f8f04f9ebd0fc9eb99f25, type: 2}
   halfMapSize: 2000
+  grasslandChance: 50
+  forestChance: 25
+  fieldChance: 20
+  townChance: 10
+  mountainChance: 5
+  islandWidth: 4000
+  islandLength: 4000
   generated: 0
   meshPrefabV: {fileID: 981745377537791640, guid: 48a9a715be96f5c4eb21f837604341b9, type: 3}
---- !u!114 &2106907922
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2106907917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a47068318b13f748b856ca50552f093, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rVal: 200
-  kVal: 60
-  widthVal: 4000
-  heightVal: 4000
-  points: []
 --- !u!64 &2106907923
 MeshCollider:
   m_ObjectHideFlags: 0
