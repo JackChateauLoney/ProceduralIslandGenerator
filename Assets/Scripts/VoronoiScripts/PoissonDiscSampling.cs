@@ -18,7 +18,7 @@ public class PoissonDiscSampling
     int currentCol;
     int currentRow;
 
-    public List<Vector3> GeneratePoints(int rVal, int kVal, int widthVal, int heightVal, int startingX, int startingZ)
+    public List<Vector3> GeneratePoints(int rVal, int kVal, int widthVal, int heightVal, Vector3 startingPos)
     {
         points = new List<Vector3>();
         grid = new List<Vector3>();
@@ -29,24 +29,24 @@ public class PoissonDiscSampling
             grid.Add(new Vector3(0, 0, 0));
         }
 
-        return PoissonDiscSample(rVal, kVal, widthVal, heightVal, startingX, startingZ);
+        return PoissonDiscSample(rVal, kVal, widthVal, heightVal, startingPos);
     }
 
 
-    private void OnDrawGizmos()
-    {
-        for (int i = 0; i < points.Count; i++)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(points[i], 0.1f);
-            Gizmos.color = Color.white;
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    for (int i = 0; i < points.Count; i++)
+    //    {
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(points[i], 0.1f);
+    //        Gizmos.color = Color.white;
+    //    }
+    //}
 
 
 
 
-    public List<Vector3> PoissonDiscSample(int r, int k, int width, int height, int startingX, int startingZ)
+    public List<Vector3> PoissonDiscSample(int r, int k, int width, int height, Vector3 startingPos)
     {
         int w = r / (int)Mathf.Sqrt(2);
         int cols = (int)Mathf.Floor(width / w);
@@ -59,6 +59,15 @@ public class PoissonDiscSampling
         currentRow = (int)Mathf.Floor(x / w);
         currentCol = (int)Mathf.Floor(z / w);
         pos = new Vector3(x, 0, z);
+
+        Debug.Log("x: " + x);
+        Debug.Log("z: " + z);
+        Debug.Log("currentRow " + currentRow);
+        Debug.Log("currentCol " + currentCol);
+        Debug.Log("pos " + pos);
+        Debug.Log("grid.Count " + grid.Count);
+        
+
         grid[currentRow + currentCol * cols] = pos;
         active.Add(pos);
 
@@ -136,6 +145,15 @@ public class PoissonDiscSampling
                 active.RemoveAt(randIndex);
             }
         }
+
+
+        //centre points around transform
+        //for (int i = 0; i < grid.Count; i++)
+        //{
+        //    grid[i] += new Vector3(width/2, 0 , height/2) - startingPos;
+        //    Debug.Log("grid: " + grid[i]);
+        //}
+
 
         return grid;
     }

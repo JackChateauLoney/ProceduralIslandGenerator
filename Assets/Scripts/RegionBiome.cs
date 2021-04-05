@@ -25,8 +25,8 @@ public class RegionBiome : MonoBehaviour
     [SerializeField] int treeSpacing = 1;
     [SerializeField] int treeK = 30;
     [SerializeField] GameObject treePrefab = null;
-    List<Vector3> randPoints = new List<Vector3>();
     List<GameObject> newTrees = new List<GameObject>();
+    List<Vector3> randPoints = new List<Vector3>();
 
 
     [Header("Field")]
@@ -35,8 +35,8 @@ public class RegionBiome : MonoBehaviour
 
     [Header("Town")]
     [SerializeField] GameObject centerObjectPrefab = null;
-    [SerializeField] GameObject buildingPrefab = null;
-
+    [SerializeField] GameObject[] buildingPrefabs = null;
+    [SerializeField] int[] chancePerBuilding = null;
 
     [Header("Mountain")]
     [SerializeField] GameObject rockPrefab = null;
@@ -120,16 +120,14 @@ public class RegionBiome : MonoBehaviour
 
         Vector3 centrePoint = GetComponent<MeshFilter>().mesh.vertices[0];
 
-        List<Vector3> points = pds.GeneratePoints(treeSpacing, treeK, 100, 100, (int)centrePoint.x, (int)centrePoint.z);
+        List<Vector3> points = pds.GeneratePoints(treeSpacing, treeK, 100, 100, Vector3.zero);
         List<Vector3> treePoints = new List<Vector3>();
 
         for (int i = 0; i < points.Count; i++)
         {
             if(points[i] == Vector3.zero)
-            {
                 treePoints.Add(points[i]);
-                Debug.Log(transform.name + " treePoints: " + treePoints[i]);
-            }
+            
         }
 
         
@@ -157,7 +155,6 @@ public class RegionBiome : MonoBehaviour
                 float randomScale = Random.Range(0.7f, 1f);
                 newTree.transform.localScale = new Vector3(randomScale, randomScale, 1);
                 newTrees.Add(newTree);
-                Debug.Log("Tree spawned: " + newTree.transform.position);
             }
         }
 
@@ -166,19 +163,51 @@ public class RegionBiome : MonoBehaviour
 
     void GenerateTown()
     {
+
+        Vector3 centrePoint = GetComponent<MeshFilter>().mesh.vertices[0];
+
         GameObject newCenterObject = Instantiate(centerObjectPrefab, transform);
         newCenterObject.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
         newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x, 55, newCenterObject.transform.position.z);
-        StartCoroutine(FreezeObject(newCenterObject));
 
+        PlaceObjectDown(newCenterObject, 1.5f);
 
+        //TODO Make this scale to any number of prefabs ===================================================================================================================================
+        //randomly pick one of the buildings
         for (int i = 0; i < 10; i++)
         {
-            GameObject tempBuilding = Instantiate(buildingPrefab, transform);
-            tempBuilding.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
-            tempBuilding.transform.position = new Vector3(tempBuilding.transform.position.x + Random.Range(-80, 80), 55, tempBuilding.transform.position.z + Random.Range(-80, 80));
-            tempBuilding.transform.Rotate(new Vector3(0, Random.Range(0f, 1f), 0));
-            StartCoroutine(FreezeObject(tempBuilding));
+            int selectedPrefab = 0;
+            int num = Random.Range(0, 100);
+            if(num <= chancePerBuilding[0])
+            {
+                selectedPrefab = 0;
+            }
+            else if(num <= chancePerBuilding[0] + chancePerBuilding[1])
+            {
+                selectedPrefab = 1;
+            }
+            else if(num <= chancePerBuilding[0] + chancePerBuilding[1] + chancePerBuilding[2])
+            {
+                selectedPrefab = 2;
+            }
+            
+
+            GameObject tempBuilding = Instantiate(buildingPrefabs[selectedPrefab], transform);
+            tempBuilding.transform.position = new Vector3(centrePoint.x + Random.Range(-80, 80), 55, centrePoint.z + Random.Range(-80, 80));
+            PlaceObjectDown(tempBuilding, 5.3f);
+            
+        }
+    }
+
+
+    void PlaceObjectDown(GameObject obj, float offset)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(obj.transform.position, Vector3.down * 100, out hit, 100f))
+        {
+            obj.transform.position = hit.point;
+            obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            obj.transform.position += transform.up * offset;
         }
     }
 

@@ -55,7 +55,7 @@ public class MeshGeneration : MonoBehaviour
 
         //pds = GetComponent<PoissonDiscSampling>();
         pds = new PoissonDiscSampling();
-        points = pds.GeneratePoints(200, 60, islandWidth, islandLength, 0, 0);
+        points = pds.GeneratePoints(200, 60, islandWidth, islandLength, Vector3.zero);
 
 
         activePoints = new List<Vector3>();
