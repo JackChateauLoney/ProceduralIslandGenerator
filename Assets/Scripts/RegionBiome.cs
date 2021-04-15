@@ -45,7 +45,7 @@ public class RegionBiome : MonoBehaviour
 
     public void GenerateBiome()
     {
-        Vector3[] vertices = GetComponent<MeshFilter>().mesh.vertices;
+        Vector3[] vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
         foreach (var item in vertices)
         {
             //get width
@@ -87,7 +87,10 @@ public class RegionBiome : MonoBehaviour
                     break;
                 }
             case BiomeType.Mountain:
-                break;
+                {
+                    GenerateMountain();
+                    break;
+                }
             default:
                 break;
         }
@@ -99,7 +102,8 @@ public class RegionBiome : MonoBehaviour
 
     void GenerateGrassland()
     {
-        regionMat = GetComponentInParent<BiomeControl>().grassMaterial;
+        if (transform.parent.GetComponentInParent<BiomeControl>())
+            regionMat = GetComponentInParent<BiomeControl>().grassMaterial;
 
         GameObject grassLayer = Instantiate(gameObject, transform);
         grassLayer.transform.localPosition = Vector3.zero;
@@ -109,40 +113,48 @@ public class RegionBiome : MonoBehaviour
 
     void GenerateField()
     {
-        regionMat = GetComponentInParent<BiomeControl>().fieldMaterial;
-        GetComponent<MeshRenderer>().material = regionMat;
+        if (transform.parent.GetComponentInParent<BiomeControl>())
+        {
+            regionMat = GetComponentInParent<BiomeControl>().fieldMaterial;
+            GetComponent<MeshRenderer>().material = regionMat;
+        }
     }
 
+    void GenerateMountain()
+    {
+        if (transform.parent.GetComponentInParent<BiomeControl>())
+        {
+            regionMat = GetComponentInParent<BiomeControl>().mountainMaterial;
+            GetComponent<MeshRenderer>().material = regionMat;
+        }
+
+        Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
+
+        Vector3[] vertices = mesh.vertices;
+        vertices[0] += new Vector3(0, 120, 0);
+        mesh.vertices = vertices;
+        mesh.RecalculateNormals();
+    }
 
     void GenerateForest()
     {
         PoissonDiscSampling pds = new PoissonDiscSampling();
 
-        Vector3 centrePoint = GetComponent<MeshFilter>().mesh.vertices[0];
+        Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
 
-        List<Vector3> points = pds.GeneratePoints(treeSpacing, treeK, 100, 100, Vector3.zero);
-        List<Vector3> treePoints = new List<Vector3>();
+        //generate points with poisson disc sampling starting at current regions centre
+        List<Vector3> points = pds.GeneratePoints(treeSpacing, treeK, 100, 100, transform.position);
 
-        for (int i = 0; i < points.Count; i++)
+        for (int i = 0; i < Mathf.Min(10, points.Count); i++)
         {
-            if(points[i] == Vector3.zero)
-                treePoints.Add(points[i]);
-            
-        }
-
-        
-
-
-        for (int i = 0; i < Mathf.Min(3, points.Count); i++)
-        {
-            points[i] += centrePoint + Vector3.up * 60;
+            points[i] += centrePoint + Vector3.up * 120;
         }
 
 
-        for (int i = 0; i < Mathf.Min(3, points.Count); i++)
+        for (int i = 0; i < Mathf.Min(10, points.Count); i++)
         {
             RaycastHit hit;
-            if (Physics.Raycast(points[i], Vector3.down * 100, out hit, 100f))
+            if (Physics.Raycast(points[i], Vector3.down * 200, out hit, 200f))
             {
                 points[i] = hit.point;
 
@@ -164,10 +176,10 @@ public class RegionBiome : MonoBehaviour
     void GenerateTown()
     {
 
-        Vector3 centrePoint = GetComponent<MeshFilter>().mesh.vertices[0];
+        Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
 
         GameObject newCenterObject = Instantiate(centerObjectPrefab, transform);
-        newCenterObject.transform.position = GetComponent<MeshFilter>().mesh.vertices[0];
+        newCenterObject.transform.position = GetComponent<MeshFilter>().sharedMesh.vertices[0];
         newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x, 55, newCenterObject.transform.position.z);
 
         PlaceObjectDown(newCenterObject, 1.5f);
@@ -178,24 +190,24 @@ public class RegionBiome : MonoBehaviour
         {
             int selectedPrefab = 0;
             int num = Random.Range(0, 100);
-            if(num <= chancePerBuilding[0])
+            if (num <= chancePerBuilding[0])
             {
                 selectedPrefab = 0;
             }
-            else if(num <= chancePerBuilding[0] + chancePerBuilding[1])
+            else if (num <= chancePerBuilding[0] + chancePerBuilding[1])
             {
                 selectedPrefab = 1;
             }
-            else if(num <= chancePerBuilding[0] + chancePerBuilding[1] + chancePerBuilding[2])
+            else if (num <= chancePerBuilding[0] + chancePerBuilding[1] + chancePerBuilding[2])
             {
                 selectedPrefab = 2;
             }
-            
 
+            //spawn building
             GameObject tempBuilding = Instantiate(buildingPrefabs[selectedPrefab], transform);
-            tempBuilding.transform.position = new Vector3(centrePoint.x + Random.Range(-80, 80), 55, centrePoint.z + Random.Range(-80, 80));
-            PlaceObjectDown(tempBuilding, 5.3f);
-            
+            tempBuilding.transform.position = new Vector3(centrePoint.x + Random.Range(-80, 80), 70, centrePoint.z + Random.Range(-80, 80));
+            PlaceObjectDown(tempBuilding, 0.0f);
+
         }
     }
 
@@ -203,7 +215,7 @@ public class RegionBiome : MonoBehaviour
     void PlaceObjectDown(GameObject obj, float offset)
     {
         RaycastHit hit;
-        if (Physics.Raycast(obj.transform.position, Vector3.down * 100, out hit, 100f))
+        if (Physics.Raycast(obj.transform.position, Vector3.down * 200, out hit, 200f))
         {
             obj.transform.position = hit.point;
             obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);

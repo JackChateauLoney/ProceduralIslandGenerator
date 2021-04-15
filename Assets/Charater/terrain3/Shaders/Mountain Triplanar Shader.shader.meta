@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 7c2452f64f479064b94c2013c942533e
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _MainTex: {fileID: 2800000, guid: 943732478216fc2408da02e8b566af0c, type: 3}
+  - _MOHSMap: {instanceID: 0}
+  - _NormalMap: {instanceID: 0}
+  - _TopMainTex: {fileID: 2800000, guid: 6544a368f522e114aa875d9b08d0fae7, type: 3}
+  - _TopMOHSMap: {instanceID: 0}
+  - _TopNormalMap: {instanceID: 0}
+  - _SandMainTex: {fileID: 2800000, guid: 1a6ef8d401039ce4b836a627804778c8, type: 3}
+  - _SandMOHSMap: {instanceID: 0}
+  - _SandNormalMap: {instanceID: 0}
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

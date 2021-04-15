@@ -18,18 +18,22 @@ public class CellCollisions : MonoBehaviour
 
         
 
-        Vector3 pos = GetComponent<MeshFilter>().mesh.vertices[0];
+        Vector3 pos = GetComponent<MeshFilter>().sharedMesh.vertices[0];
+        Debug.Log("pos: " + pos);
         
         //check if self is within area defined
         if(pos.x < topLeft.position.x || pos.x > bottomRight.position.x ||
            pos.z < topLeft.position.z || pos.z > bottomRight.position.z)
         { 
-            Destroy(gameObject);
+            DestroyImmediate(gameObject);
+        }
+        else
+        {
+            voronoiParent = transform.parent.GetComponent<MeshGeneration>().voronoiParent;
+            transform.parent = voronoiParent.transform;
         }
 
 
-
-        voronoiParent = transform.parent.GetComponent<MeshGeneration>().voronoiParent;
-        transform.parent = voronoiParent.transform;
+        
     }
 }

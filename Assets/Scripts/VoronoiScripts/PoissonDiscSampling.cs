@@ -58,15 +58,7 @@ public class PoissonDiscSampling
         z = 0;
         currentRow = (int)Mathf.Floor(x / w);
         currentCol = (int)Mathf.Floor(z / w);
-        pos = new Vector3(x, 0, z);
-
-        Debug.Log("x: " + x);
-        Debug.Log("z: " + z);
-        Debug.Log("currentRow " + currentRow);
-        Debug.Log("currentCol " + currentCol);
-        Debug.Log("pos " + pos);
-        Debug.Log("grid.Count " + grid.Count);
-        
+        pos = new Vector3(x, 0, z) + startingPos;
 
         grid[currentRow + currentCol * cols] = pos;
         active.Add(pos);

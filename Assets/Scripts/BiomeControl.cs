@@ -16,7 +16,8 @@ public class BiomeControl : MonoBehaviour
 
     public RegionBiome.BiomeType brushType = RegionBiome.BiomeType.Grassland;
 
-
+    
     public Material grassMaterial = null;
     public Material fieldMaterial = null;
+    public Material mountainMaterial = null;
 }

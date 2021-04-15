@@ -8,6 +8,7 @@
 sampler2D _MOHSMap;
 sampler2D _TopMainTex, _TopMOHSMap, _TopNormalMap;
 sampler2D _SandMainTex, _SandMOHSMap, _SandNormalMap;
+sampler2D _SnowMainTex, _SnowMOHSMap, _SnowNormalMap;
 
 float _MapScale;
 
@@ -86,9 +87,17 @@ void MyTriPlanarSurfaceFunction(
 		}
 
 		
-		if (parameters.position.y >= 36.0f)  //grass
+		if (parameters.position.y >= 36.0f && parameters.position.y < 150.0f)  //grass
 		{
 			albedoY = tex2D(_TopMainTex, triUV.y).rgb;
+			mohsY = tex2D(_MOHSMap, triUV.y);
+			rawNormalY = tex2D(_TopNormalMap, triUV.y);
+		}
+
+
+		if (parameters.position.y >= 150.0f)  //snow
+		{
+			albedoY = tex2D(_SnowMainTex, triUV.y).rgb;
 			mohsY = tex2D(_MOHSMap, triUV.y);
 			rawNormalY = tex2D(_TopNormalMap, triUV.y);
 		}

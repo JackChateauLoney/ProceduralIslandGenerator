@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshCollider))]
 public class MeshGeneration : MonoBehaviour
 {
-
+    [SerializeField] GameObject meshPrefabV = null;
     public Transform topLeft = null;
     public Transform bottomRight = null;
     public GameObject voronoiParent = null;
@@ -14,18 +14,19 @@ public class MeshGeneration : MonoBehaviour
     [SerializeField] Material terrainShader = null;
     [SerializeField] float halfMapSize = 10f;
 
-    [Header("Biome chances, should add up to 100")]
+    [Header("Biome probablility, should add up to 100")]
     [SerializeField] int grasslandChance = 50;
     [SerializeField] int forestChance = 30;
     [SerializeField] int fieldChance = 10;
     [SerializeField] int townChance = 5;
     [SerializeField] int mountainChance = 5;
 
+    [Header("Island settings")]
     [SerializeField] int islandWidth = 4000;
     [SerializeField] int islandLength = 4000;
     PoissonDiscSampling pds = null;
-    List<Vector3> points;
-    List<Vector3> activePoints;
+    List<Vector3> points = new List<Vector3>();
+    List<Vector3> activePoints = new List<Vector3>();
 
     Mesh mesh = null;
     Vector3[] vertices;
@@ -39,25 +40,33 @@ public class MeshGeneration : MonoBehaviour
 
     List<VoronoiCell> voronoiCells;
 
-    Color[] gizmoColours = new Color[100];
-
     List<Mesh> voronoiMeshes = new List<Mesh>();
-    [SerializeField] GameObject meshPrefabV = null;
 
-    // Start is called before the first frame update
-    void Start()
+    public bool testGizmos = false;
+    private void OnEnable()
     {
+        generated = false;
+        testGizmos = false;
+    }
 
+
+    private void Start()
+    {
+        //GenerateTerrain();
+    }
+
+    public void GenerateTerrain()
+    {
         voronoiMeshes.Clear();
 
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-
-        //pds = GetComponent<PoissonDiscSampling>();
         pds = new PoissonDiscSampling();
+
+        points.Clear();
         points = pds.GeneratePoints(200, 60, islandWidth, islandLength, Vector3.zero);
 
-
+        activePoints.Clear();
         activePoints = new List<Vector3>();
 
         //only take the points that are not at 0
@@ -65,12 +74,9 @@ public class MeshGeneration : MonoBehaviour
             if (points[i] != Vector3.zero)
                 activePoints.Add(points[i]);
 
-
-
-        for (int i = 0; i < gizmoColours.Length; i++)
-            gizmoColours[i] = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f), 1f);
-
-
+        //move points to line up with object
+        for (int i = 0; i < activePoints.Count; i++)
+            activePoints[i] += new Vector3(islandWidth / 2, 0, islandLength / 2) - transform.position;
 
 
 
@@ -84,35 +90,39 @@ public class MeshGeneration : MonoBehaviour
 
 
 
-    void OnDrawGizmos()
-    {
-        if (!generated)
-            return;
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
-        Gizmos.color = Color.white;
+    //void OnDrawGizmos()
+    //{
+    //    if (!generated)
+    //        return;
 
-
-        //show points within delaunay
-        for (int i = 1; i < delaunayPoints.Count; i++)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(delaunayPoints[i].v1.position + Vector3.up, 0.1f);
-            Gizmos.DrawSphere(delaunayPoints[i].v2.position + Vector3.up, 0.1f);
-            Gizmos.DrawSphere(delaunayPoints[i].v3.position + Vector3.up, 0.1f);
-        }
-
-        //show points
-        for (int i = 1; i < vertexes.Count; i++)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
-            Gizmos.color = Color.white;
-        }
+    //    Gizmos.color = Color.green;
+    //    Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
+    //    Gizmos.color = Color.white;
 
 
-    }
+    //    //show points within delaunay
+    //    for (int i = 1; i < delaunayPoints.Count; i++)
+    //    {
+    //        Gizmos.color = Color.yellow;
+    //        Gizmos.DrawSphere(delaunayPoints[i].v1.position + Vector3.up, 0.1f);
+    //        Gizmos.DrawSphere(delaunayPoints[i].v2.position + Vector3.up, 0.1f);
+    //        Gizmos.DrawSphere(delaunayPoints[i].v3.position + Vector3.up, 0.1f);
+    //    }
+
+    //    //show points
+    //    for (int i = 1; i < vertexes.Count; i++)
+    //    {
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
+    //        Gizmos.color = Color.white;
+    //    }
+
+
+
+            
+
+    //}
 
 
 
@@ -131,9 +141,9 @@ public class MeshGeneration : MonoBehaviour
 
         for (int i = 0; i < delaunayPoints.Count; i++)
         {
-            delaunayPoints[i].v1.position.y += Random.Range(0, 4);
-            delaunayPoints[i].v2.position.y += Random.Range(0, 4);
-            delaunayPoints[i].v3.position.y += Random.Range(0, 4);
+            delaunayPoints[i].v1.position.y += Random.Range(9, 12);
+            delaunayPoints[i].v2.position.y += Random.Range(9, 12);
+            delaunayPoints[i].v3.position.y += Random.Range(9, 12);
         }
 
 
@@ -220,6 +230,12 @@ public class MeshGeneration : MonoBehaviour
                 Vector3 p3 = c.edges[j].v1;
                 Vector3 p2 = c.edges[j].v2;
 
+                //ensure points are valid
+                if(float.IsNaN(p2.x) || float.IsNaN(p2.y) || float.IsNaN(p2.z))
+                    p2 = new Vector3(1,1,1);
+                if(float.IsNaN(p3.x) || float.IsNaN(p3.y) || float.IsNaN(p3.z))
+                    p3 = new Vector3(1,1,1);
+
                 vertices.Add(p2);
                 vertices.Add(p3);
                 fullVoronoivertices.Add(p2);
@@ -240,14 +256,18 @@ public class MeshGeneration : MonoBehaviour
             triangleMesh.triangles = triangles.ToArray();
 
             triangleMesh.RecalculateNormals();
-
+            
             voronoiMeshes.Add(triangleMesh);
         }
 
+        Debug.Log("v mesh count: " + voronoiMeshes.Count);
+
+        testGizmos = true;
 
         //create meshes for each region of voronoi
         for (int i = 0; i < voronoiMeshes.Count; i++)
         {
+
             GameObject newMesh = Instantiate(meshPrefabV, transform);
             newMesh.GetComponent<MeshFilter>().mesh = voronoiMeshes[i];
             newMesh.GetComponent<MeshCollider>().sharedMesh = null;
@@ -255,7 +275,9 @@ public class MeshGeneration : MonoBehaviour
             newMesh.GetComponent<Renderer>().material = terrainShader;
             newMesh.GetComponent<CellCollisions>().Init();
 
-
+            //init may destroy cell, so return if it has
+            if (newMesh == null)
+                continue;
 
 
             DistributeBiomes(newMesh);

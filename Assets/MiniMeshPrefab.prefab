@@ -125,15 +125,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   myBiome: 0
   regionMat: {fileID: 2100000, guid: bc983064afdc993448fb99fc00429d42, type: 2}
-  treeSpacing: 1
-  treeK: 30
+  treeSpacing: 4
+  treeK: 60
   treePrefab: {fileID: 5908034011355324956, guid: 62dbea7b78833c442a59ee3bd54358bf, type: 3}
   fieldDirtPrefab: {fileID: 0}
   centerObjectPrefab: {fileID: 4045316877941754127, guid: ddf100d47958ed24aa8375c2a5da0235, type: 3}
   buildingPrefabs:
-  - {fileID: 68389469378138537, guid: 38569f74d32ab9c4295733e123eb9f6e, type: 3}
-  - {fileID: 68389469378138537, guid: f6522e620137ade49bb9626a6c9536c3, type: 3}
-  - {fileID: 68389469378138537, guid: a1a8cde13dda23b4aad6404d9327a802, type: 3}
+  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
+  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
+  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
   chancePerBuilding: 320000001e00000014000000
   rockPrefab: {fileID: 0}
 --- !u!54 &937703121381639193
