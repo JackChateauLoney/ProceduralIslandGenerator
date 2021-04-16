@@ -129,11 +129,14 @@ MonoBehaviour:
   treeK: 60
   treePrefab: {fileID: 5908034011355324956, guid: 62dbea7b78833c442a59ee3bd54358bf, type: 3}
   fieldDirtPrefab: {fileID: 0}
-  centerObjectPrefab: {fileID: 4045316877941754127, guid: ddf100d47958ed24aa8375c2a5da0235, type: 3}
+  cropPrefabs:
+  - {fileID: 5743282993732911266, guid: 4e41c0186907aca449aedc8cd8ebb782, type: 3}
+  chancePerCrop: 64000000
+  centerObjectPrefab: {fileID: 2123160833195201727, guid: 75c7ea621c5580544a2f3135bda29367, type: 3}
   buildingPrefabs:
-  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
-  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
-  - {fileID: 919132149155446097, guid: 466873b9c44cea74b9ab9e1f5abc0174, type: 3}
+  - {fileID: 8883921733578372351, guid: fe10424f05716c845a035db8e1cd8ea5, type: 3}
+  - {fileID: 8883921733578372351, guid: fe10424f05716c845a035db8e1cd8ea5, type: 3}
+  - {fileID: 8883921733578372351, guid: fe10424f05716c845a035db8e1cd8ea5, type: 3}
   chancePerBuilding: 320000001e00000014000000
   rockPrefab: {fileID: 0}
 --- !u!54 &937703121381639193

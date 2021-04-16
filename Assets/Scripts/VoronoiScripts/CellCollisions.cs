@@ -19,7 +19,6 @@ public class CellCollisions : MonoBehaviour
         
 
         Vector3 pos = GetComponent<MeshFilter>().sharedMesh.vertices[0];
-        Debug.Log("pos: " + pos);
         
         //check if self is within area defined
         if(pos.x < topLeft.position.x || pos.x > bottomRight.position.x ||
