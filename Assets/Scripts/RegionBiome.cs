@@ -22,12 +22,15 @@ public class RegionBiome : MonoBehaviour
 
 
     [Header("Forest")]
+    [SerializeField] int treeAreaWidth = 200;
+    [SerializeField] int treeAreaLength = 200;
     [SerializeField] int treeSpacing = 1;
     [SerializeField] int treeK = 30;
     [SerializeField] GameObject treePrefab = null;
     List<GameObject> newTrees = new List<GameObject>();
+
     List<Vector3> randPoints = new List<Vector3>();
-    
+
     List<Vector3> forestPoints = new List<Vector3>();
     bool forestGenerated = false;
 
@@ -51,19 +54,19 @@ public class RegionBiome : MonoBehaviour
         int whileSafeCatch = 0;
 
         //remove all children
-        while(transform.childCount > 0)
+        while (transform.childCount > 0)
         {
             DestroyImmediate(transform.GetChild(0).gameObject);
             whileSafeCatch++;
 
             //stop the while loop being infinite, just in case because this is in editor
-            if(whileSafeCatch > 10000)
+            if (whileSafeCatch > 10000)
             {
                 Debug.Log("While loop went on for too long, exiting to keep the editor safe :)");
                 break;
             }
         }
-    
+
 
         //reset material
         if (transform.parent.GetComponentInParent<BiomeControl>())
@@ -74,7 +77,7 @@ public class RegionBiome : MonoBehaviour
 
 
     public void GenerateBiome()
-    {        
+    {
         Vector3[] vertices = GetComponent<MeshFilter>().sharedMesh.vertices;
         foreach (var item in vertices)
         {
@@ -200,15 +203,15 @@ public class RegionBiome : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(!forestGenerated)
-        return;
+        if (!forestGenerated)
+            return;
 
         for (int i = 0; i < Mathf.Min(40, forestPoints.Count); i++)
         {
             Gizmos.DrawSphere(forestPoints[i], 0.2f);
         }
 
-        
+
     }
 
 
@@ -224,29 +227,41 @@ public class RegionBiome : MonoBehaviour
         Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
 
         //generate points with poisson disc sampling starting at current regions centre
-        forestPoints = pds.GeneratePoints(treeSpacing, treeK, 100, 100, transform.position);
+        forestPoints = pds.GeneratePoints(treeSpacing, treeK, treeAreaWidth, treeAreaLength, transform.position);
+        List<Vector3> newForestPoints = new List<Vector3>();
 
-        for (int i = 0; i < Mathf.Min(10, forestPoints.Count); i++)
+
+        for (int i = 0; i < forestPoints.Count; i++)
         {
-            forestPoints[i] += centrePoint + Vector3.up * 120;
+            if (forestPoints[i] != Vector3.zero)
+                newForestPoints.Add(forestPoints[i]);
+        }
+
+        Debug.Log("New Forest ======================");
+        for (int i = 0; i < Mathf.Min(1000, newForestPoints.Count); i++)
+        {
+            Debug.Log("New Forest Points: " + newForestPoints[i]);
+            newForestPoints[i] += centrePoint + Vector3.up * 120;
+            newForestPoints[i] -= new Vector3(treeAreaWidth / 2, 0, treeAreaLength / 2);
         }
 
 
-        for (int i = 0; i < Mathf.Min(10, forestPoints.Count); i++)
+        for (int i = 0; i < Mathf.Min(100, newForestPoints.Count); i++)
         {
             RaycastHit hit;
-            if (Physics.Raycast(forestPoints[i], Vector3.down * 200, out hit, 200f))
+            if (Physics.Raycast(newForestPoints[i], Vector3.down * 200, out hit, 200f))
             {
-                forestPoints[i] = hit.point;
+                newForestPoints[i] = hit.point;
 
                 GameObject newTree = Instantiate(treePrefab, transform);
-                newTree.transform.position = forestPoints[i];
+                newTree.transform.position = newForestPoints[i];
                 newTree.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                newTree.transform.position += transform.up * 1.3f;
+                
                 //newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
 
-                float randomScale = Random.Range(0.7f, 1f);
-                newTree.transform.localScale = new Vector3(randomScale, randomScale, 1);
+                float randomScale = Random.Range(2f, 3f);
+                newTree.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                newTree.transform.position += transform.up * randomScale;
                 newTrees.Add(newTree);
             }
         }
@@ -304,7 +319,7 @@ public class RegionBiome : MonoBehaviour
         if (Physics.Raycast(obj.transform.position, Vector3.down * 200, out hit, 200f))
         {
             obj.transform.position = hit.point;
-            if(rotateToNormal)
+            if (rotateToNormal)
                 obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
             obj.transform.position += transform.up * offset;
         }

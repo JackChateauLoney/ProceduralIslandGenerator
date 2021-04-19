@@ -27,9 +27,9 @@ Material:
     - _BendRotationRandom: 0.067
     - _BladeCurve: 1.02
     - _BladeForward: 0.38
-    - _BladeHeight: 0.31
+    - _BladeHeight: 0.4
     - _BladeHeightRandom: 0.5
-    - _BladeWidth: 0.1
+    - _BladeWidth: 0.2
     - _BladeWidthRandom: 0.15
     - _TessellationUniform: 78
     - _TranslucentGain: 1
