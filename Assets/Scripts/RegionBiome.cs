@@ -62,8 +62,10 @@ public class RegionBiome : MonoBehaviour
     [SerializeField] int buildingSpacing = 25;
     [SerializeField] int buildingK = 120;
     [SerializeField] float buildingOffset = 0.0f;
+    [SerializeField] float buildingSideOffset = 20.0f;
     [SerializeField] float buildingScaleMin = 0.2f;
     [SerializeField] float buildingScaleMax = 1.0f;
+    Vector3 roadLine = Vector3.zero;
     List<Vector3> buildingPoints = new List<Vector3>();
 
     List<Vector3> roadPoints = new List<Vector3>();
@@ -310,8 +312,8 @@ public class RegionBiome : MonoBehaviour
         if (generatedTown)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(roadPoints[0], (roadPoints[randPoint1] + roadPoints[randPoint1 - 1]) / 2);
-            Gizmos.DrawLine(roadPoints[0], (roadPoints[randPoint2] + roadPoints[randPoint2 - 1]) / 2);
+            Gizmos.DrawLine(roadPoints[0], roadLine);
+            Gizmos.DrawLine(roadPoints[0], roadLine);
             Gizmos.color = Color.white;
         }
     }
@@ -321,6 +323,7 @@ public class RegionBiome : MonoBehaviour
         //delete contents of biome
         MakeBlank();
 
+        SetCentreHeight(1.0f);
 
         //get centre of biome to place monument
         Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
@@ -352,14 +355,26 @@ public class RegionBiome : MonoBehaviour
         generatedTown = true;
 
 
+        roadLine = Vector3.Lerp(roadPoints[randPoint1], roadPoints[randPoint1 - 1], 0.5f);
+
+
+        Vector3 left = Vector3.Cross(roadLine - roadPoints[0], Vector3.up).normalized;
+
+        buildingPoints.Clear();
+        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.25f) + left * buildingSideOffset);
+        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.5f) + left * buildingSideOffset);
+        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.75f) + left * buildingSideOffset);
+
+        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.34f) - left * buildingSideOffset);
+        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.67f) - left * buildingSideOffset);
+
 
         //place buildings
-        buildingPoints = PoissonPoints(buildingSpacing, buildingK, buildingAreaWidth, buildingAreaLength, transform.position);
 
-        for (int i = 0; i < Mathf.Min(1000, buildingPoints.Count); i++)
+        for (int i = 0; i < buildingPoints.Count; i++)
         {
             RaycastHit hit;
-            if (Physics.Raycast(buildingPoints[i], Vector3.down * 200, out hit, 200f))
+            if (Physics.Raycast(buildingPoints[i] + Vector3.up * 150, Vector3.down * 200, out hit, 200f))
             {
                 //only spawn on this biome
                 if (hit.transform.gameObject != gameObject)
@@ -371,7 +386,19 @@ public class RegionBiome : MonoBehaviour
                 newBuilding.transform.position = buildingPoints[i];
                 newBuilding.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
 
-                newBuilding.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+                if (i < 3)
+                {
+                    newBuilding.transform.LookAt(newBuilding.transform.position - left, transform.up);
+                    newBuilding.transform.Rotate(new Vector3(0, -90, 0));
+                    Debug.Log("i:" + i + " left: " + left);
+                }
+                else
+                {
+                    newBuilding.transform.LookAt(newBuilding.transform.position + left, transform.up);
+                    newBuilding.transform.Rotate(new Vector3(0, -90, 0));
+                    //newBuilding.transform.Rotate(new Vector3(0, -left.y, 0));
+                    Debug.Log("i:" + i + " left: " + left);
+                }
 
                 float randomScale = Random.Range(buildingScaleMin, buildingScaleMax);
                 newBuilding.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
@@ -419,5 +446,21 @@ public class RegionBiome : MonoBehaviour
 
         return newPoints;
     }
+
+
+
+    public void SetCentreHeight(float height)
+    {
+        //get centre point and apply new value
+        Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
+        Vector3 point = GetComponent<MeshFilter>().sharedMesh.vertices[0];
+
+        Vector3[] vertices = mesh.vertices;
+        vertices[0] = new Vector3(point.x, height, point.z);
+        mesh.vertices = vertices;
+        mesh.RecalculateNormals();
+        GetComponent<MeshCollider>().sharedMesh = mesh;
+    }
+
 
 }

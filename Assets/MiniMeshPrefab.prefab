@@ -161,6 +161,7 @@ MonoBehaviour:
   buildingSpacing: 56
   buildingK: 120
   buildingOffset: 0
+  buildingSideOffset: 20
   buildingScaleMin: 0.9
   buildingScaleMax: 1.1
   rockPrefab: {fileID: 0}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [System.Serializable]
-public class Path 
+public class Path
 {
     [SerializeField, HideInInspector] List<Vector2> points;
     [SerializeField, HideInInspector] bool isClosed;
@@ -20,7 +20,7 @@ public class Path
             centre + Vector2.right
         };
 
-    
+
     }
 
 
@@ -40,16 +40,16 @@ public class Path
         }
         set
         {
-            if(isClosed != value)
+            if (isClosed != value)
             {
                 isClosed = value;
-        
-                if(isClosed)
+
+                if (isClosed)
                 {
                     //add new control points
                     points.Add(points[points.Count - 1] * 2 - points[points.Count - 2]);
                     points.Add(points[0] * 2 - points[1]);
-                    if(autoSetControlPoints)
+                    if (autoSetControlPoints)
                     {
                         AutoSetAnchorControlPoints(0);
                         AutoSetAnchorControlPoints(points.Count - 3);
@@ -59,7 +59,7 @@ public class Path
                 {
                     //remove control points to remove loop
                     points.RemoveRange(points.Count - 2, 2);
-                    if(autoSetControlPoints)
+                    if (autoSetControlPoints)
                     {
                         AutoSetStartAndEndControls();
                     }
@@ -76,12 +76,11 @@ public class Path
         }
         set
         {
-            if(autoSetControlPoints != value)
+            if (autoSetControlPoints != value)
             {
                 autoSetControlPoints = value;
-                if(autoSetControlPoints)
+                if (autoSetControlPoints)
                     AutoSetAllControlPoints();
-                
             }
         }
     }
@@ -109,7 +108,7 @@ public class Path
         points.Add((points[points.Count - 1] + anchorPos) * 0.5f);
         points.Add(anchorPos);
 
-        if(autoSetControlPoints)
+        if (autoSetControlPoints)
         {
             AutoSetAllAffectedControlPoints(points.Count - 1);
         }
@@ -117,8 +116,8 @@ public class Path
 
     public void SplitSegment(Vector2 anchorPos, int segmentIndex)
     {
-        points.InsertRange(segmentIndex * 3 + 2, new Vector2[]{ Vector2.zero, anchorPos, Vector2.zero });
-        if(autoSetControlPoints)
+        points.InsertRange(segmentIndex * 3 + 2, new Vector2[] { Vector2.zero, anchorPos, Vector2.zero });
+        if (autoSetControlPoints)
         {
             AutoSetAllAffectedControlPoints(segmentIndex * 3 + 3);
         }
@@ -131,12 +130,12 @@ public class Path
 
     public void DeleteSegment(int anchorIndex)
     {
-        
-        if(NumSegments > 2 || !isClosed && NumSegments > 1)
+
+        if (NumSegments > 2 || !isClosed && NumSegments > 1)
         {
-            if(anchorIndex == 0)
+            if (anchorIndex == 0)
             {
-                if(isClosed)
+                if (isClosed)
                 {
                     points[points.Count - 1] = points[2];
                 }
@@ -152,13 +151,13 @@ public class Path
             }
         }
 
-        
+
     }
 
 
     public Vector2[] GetPointsInSegment(int i)
     {
-        return new Vector2[]{points[i * 3], points[i * 3 + 1], points[i * 3 + 2], points[LoopIndex(i * 3 + 3)]};
+        return new Vector2[] { points[i * 3], points[i * 3 + 1], points[i * 3 + 2], points[LoopIndex(i * 3 + 3)] };
     }
 
 
@@ -166,41 +165,43 @@ public class Path
     {
         Vector2 deltaMove = pos - points[i];
 
-        if(i%3 != 0 || autoSetControlPoints)
-            return;
-
-        points[i] = pos;
-        
-
-        if(autoSetControlPoints)
+        if (i % 3 == 0 || autoSetControlPoints)
         {
-            AutoSetAllAffectedControlPoints(i);
-        }
-        else
-        {
-            //moving an anchor point because theyre always at indexes of 3
-            if(i % 3 == 0)
+            points[i] = pos;
+            Debug.Log("Points");
+
+            if (autoSetControlPoints)
             {
-                if(i + 1 < points.Count || isClosed)
-                    points[LoopIndex(i + 1)] += deltaMove;
-                if(i - 1 >= 0 || isClosed)
-                    points[LoopIndex(i - 1)] += deltaMove;
+                AutoSetAllAffectedControlPoints(i);
             }
             else
             {
-                bool nextPointIsAnchor = (i + 1) % 3 == 0;
-                int correspoindingControlIndex = (nextPointIsAnchor) ? i + 2 : i - 2;
-                int anchorIndex = (nextPointIsAnchor) ? i + 1 : i - 1;
-
-                if(correspoindingControlIndex >= 0 && correspoindingControlIndex < points.Count || isClosed)
+                //moving an anchor point because theyre always at indexes of 3
+                if (i % 3 == 0)
                 {
-                    float dst = (points[LoopIndex(anchorIndex)] - points[LoopIndex(correspoindingControlIndex)]).magnitude;
-                    Vector2 dir = (points[LoopIndex(anchorIndex)] - pos).normalized;
-                    points[LoopIndex(correspoindingControlIndex)] = points[LoopIndex(anchorIndex)] + dir * dst;
+                    if (i + 1 < points.Count || isClosed)
+                        points[LoopIndex(i + 1)] += deltaMove;
+                    if (i - 1 >= 0 || isClosed)
+                        points[LoopIndex(i - 1)] += deltaMove;
                 }
-            
+                else
+                {
+                    bool nextPointIsAnchor = (i + 1) % 3 == 0;
+                    int correspoindingControlIndex = (nextPointIsAnchor) ? i + 2 : i - 2;
+                    int anchorIndex = (nextPointIsAnchor) ? i + 1 : i - 1;
+
+                    if (correspoindingControlIndex >= 0 && correspoindingControlIndex < points.Count || isClosed)
+                    {
+                        float dst = (points[LoopIndex(anchorIndex)] - points[LoopIndex(correspoindingControlIndex)]).magnitude;
+                        Vector2 dir = (points[LoopIndex(anchorIndex)] - pos).normalized;
+                        points[LoopIndex(correspoindingControlIndex)] = points[LoopIndex(anchorIndex)] + dir * dst;
+                    }
+
+                }
             }
         }
+
+
     }
 
 
@@ -218,9 +219,9 @@ public class Path
             float estimatedCurveLength = Vector2.Distance(p[0], p[3]) + controlNetLength / 2f;
             int divisions = Mathf.CeilToInt(estimatedCurveLength * resolution * 10);
             float t = 0;
-            while(t <= 1)
+            while (t <= 1)
             {
-                t += 1f/divisions;
+                t += 1f / divisions;
                 Vector2 pointOnCurve = Bezier.EvaluateCubic(p[0], p[1], p[2], p[3], t);
                 dstSinceLastEvenPoint += Vector2.Distance(previousPoint, pointOnCurve);
 
@@ -245,7 +246,7 @@ public class Path
     {
         for (int i = updatedAnchorIndex - 3; i < updatedAnchorIndex + 3; i += 3)
         {
-            if(i >= 0 && i < points.Count || isClosed)
+            if (i >= 0 && i < points.Count || isClosed)
             {
                 AutoSetAnchorControlPoints(LoopIndex(i));
             }
@@ -262,7 +263,7 @@ public class Path
         }
 
         AutoSetStartAndEndControls();
-        
+
     }
 
     void AutoSetAnchorControlPoints(int anchorIndex)
@@ -271,14 +272,14 @@ public class Path
         Vector2 dir = Vector2.zero;
         float[] neighbourDistances = new float[2];
 
-        if(anchorIndex - 3 >= 0 || isClosed)
+        if (anchorIndex - 3 >= 0 || isClosed)
         {
             Vector2 offset = points[LoopIndex(anchorIndex - 3)] - anchorPos;
             dir += offset.normalized;
             neighbourDistances[0] = offset.magnitude;
         }
 
-        if(anchorIndex + 3 >= 0 || isClosed)
+        if (anchorIndex + 3 >= 0 || isClosed)
         {
             Vector2 offset = points[LoopIndex(anchorIndex + 3)] - anchorPos;
             dir -= offset.normalized;
@@ -290,7 +291,7 @@ public class Path
         for (int i = 0; i < 2; i++)
         {
             int controlIndex = anchorIndex + i * 2 - 1;
-            if(controlIndex >= 0 && controlIndex < points.Count || isClosed)
+            if (controlIndex >= 0 && controlIndex < points.Count || isClosed)
             {
                 points[LoopIndex(controlIndex)] = anchorPos + dir * neighbourDistances[i] * 0.5f;
             }
@@ -300,12 +301,12 @@ public class Path
 
     void AutoSetStartAndEndControls()
     {
-        if(!isClosed)
+        if (!isClosed)
         {
             points[1] = (points[0] + points[2]) * 0.5f;
             points[points.Count - 2] = (points[points.Count - 1] + points[points.Count - 3]) * 0.5f;
         }
-        
+
     }
 
 

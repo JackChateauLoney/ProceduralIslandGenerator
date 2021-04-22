@@ -123,7 +123,7 @@ public class PathEditor : Editor
         }
         
 
-
+        HandleUtility.AddDefaultControl(0);
     }
 
 
