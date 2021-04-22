@@ -124,17 +124,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myBiome: 0
+  centreHeight: 0
+  originalCentreHeight: {x: 0, y: 0, z: 0}
   regionMat: {fileID: 2100000, guid: bc983064afdc993448fb99fc00429d42, type: 2}
-<<<<<<< Updated upstream
-  treeAreaWidth: 100
-  treeAreaLength: 100
-  treeSpacing: 7
-  treeK: 120
-=======
->>>>>>> Stashed changes
   treePrefab: {fileID: 5908034011355324956, guid: 62dbea7b78833c442a59ee3bd54358bf, type: 3}
-  treeAreaWidth: 300
-  treeAreaLength: 300
+  treeAreaWidth: 400
+  treeAreaLength: 400
   treeSpacing: 7
   treeK: 120
   treeOffset: 1.5

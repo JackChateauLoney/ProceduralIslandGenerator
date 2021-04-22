@@ -12,13 +12,13 @@ namespace Script.Movements
 
         [Header("Walk / Run Setting")]
         [Space(25)]
-        [SerializeField] private float walkSpeed = 4.0f;
-        [SerializeField] private float runSpeed = 6.0f;
+        [SerializeField] private float walkSpeed = 300.0f;
+        [SerializeField] private float runSpeed = 900.0f;
 
         [Header("Jump Settings")]
-        [SerializeField] private float playerJumpForce = 20000.0f;
-        [SerializeField] private ForceMode appliedForceMode = ForceMode.Force;
-        [SerializeField] private float gravity = 20.0f;
+        [SerializeField] private float playerJumpForce = 60.0f;
+        [SerializeField] private ForceMode appliedForceMode = ForceMode.Impulse;
+        [SerializeField] private float gravity = 6000.0f;
 
 
 

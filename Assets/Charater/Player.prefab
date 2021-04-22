@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f913da9aa6b5bb44ea1fd209e827d5ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 100
+  mouseSensitivity: 200
 --- !u!1 &2078829805300454070
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,8 +187,8 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 64
-  walkSpeed: 200
-  runSpeed: 600
+  walkSpeed: 300
+  runSpeed: 900
   playerJumpForce: 35
   appliedForceMode: 1
   gravity: 6000

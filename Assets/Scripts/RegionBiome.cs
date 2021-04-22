@@ -23,19 +23,6 @@ public class RegionBiome : MonoBehaviour
 
 
     [Header("Forest")]
-<<<<<<< Updated upstream
-    [SerializeField] int treeAreaWidth = 200;
-    [SerializeField] int treeAreaLength = 200;
-    [SerializeField] int treeSpacing = 1;
-    [SerializeField] int treeK = 30;
-    [SerializeField] GameObject treePrefab = null;
-    List<GameObject> newTrees = new List<GameObject>();
-
-    List<Vector3> randPoints = new List<Vector3>();
-
-    List<Vector3> forestPoints = new List<Vector3>();
-    bool forestGenerated = false;
-=======
     [SerializeField] GameObject treePrefab = null;
     [SerializeField] int treeAreaWidth = 400;
     [SerializeField] int treeAreaLength = 400;
@@ -50,7 +37,6 @@ public class RegionBiome : MonoBehaviour
     [SerializeField] float bushOffset = 0.5f;
     [SerializeField] float bushScaleMin = 1.2f;
     [SerializeField] float bushScaleMax = 0.8f;
->>>>>>> Stashed changes
 
     List<Vector3> forestPoints = new List<Vector3>();
     List<Vector3> bushPoints = new List<Vector3>();
@@ -260,25 +246,6 @@ public class RegionBiome : MonoBehaviour
     }
 
 
-
-<<<<<<< Updated upstream
-    private void OnDrawGizmos()
-    {
-        if (!forestGenerated)
-            return;
-
-        for (int i = 0; i < Mathf.Min(40, forestPoints.Count); i++)
-        {
-            Gizmos.DrawSphere(forestPoints[i], 0.2f);
-        }
-
-
-    }
-
-
-
-=======
->>>>>>> Stashed changes
     void GenerateForest()
     {
         //delete contents of biome
@@ -298,82 +265,40 @@ public class RegionBiome : MonoBehaviour
                     continue;
 
                 bushPoints[i] = hit.point;
-
-<<<<<<< Updated upstream
-        //generate points with poisson disc sampling starting at current regions centre
-        forestPoints = pds.GeneratePoints(treeSpacing, treeK, treeAreaWidth, treeAreaLength, transform.position);
-        List<Vector3> newForestPoints = new List<Vector3>();
-
-
-        for (int i = 0; i < forestPoints.Count; i++)
-        {
-            if (forestPoints[i] != Vector3.zero)
-                newForestPoints.Add(forestPoints[i]);
-        }
-
-        Debug.Log("New Forest ======================");
-        for (int i = 0; i < Mathf.Min(1000, newForestPoints.Count); i++)
-        {
-            Debug.Log("New Forest Points: " + newForestPoints[i]);
-            newForestPoints[i] += centrePoint + Vector3.up * 120;
-            newForestPoints[i] -= new Vector3(treeAreaWidth / 2, 0, treeAreaLength / 2);
-        }
-=======
                 GameObject newBush = Instantiate(bushPrefab, transform);
                 newBush.transform.position = bushPoints[i];
                 newBush.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-
                 newBush.transform.Rotate(new Vector3(-90, Random.Range(0, 360), 0));
->>>>>>> Stashed changes
-
                 float randomScale = Random.Range(bushScaleMin, bushScaleMax);
                 newBush.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
                 newBush.transform.position += transform.up * randomScale * bushOffset;
             }
         }
 
-<<<<<<< Updated upstream
-        for (int i = 0; i < Mathf.Min(100, newForestPoints.Count); i++)
-=======
+
         //place trees
         for (int i = 0; i < Mathf.Min(1000, forestPoints.Count); i++)
->>>>>>> Stashed changes
         {
             if (Random.Range(0, 10) == 1)
                 continue;
 
             RaycastHit hit;
-            if (Physics.Raycast(newForestPoints[i], Vector3.down * 200, out hit, 200f))
+            if (Physics.Raycast(forestPoints[i], Vector3.down * 200, out hit, 200f))
             {
-<<<<<<< Updated upstream
-                newForestPoints[i] = hit.point;
-=======
                 //only spawn trees on this biome
                 if (hit.transform.gameObject != gameObject)
                     continue;
 
                 forestPoints[i] = hit.point;
->>>>>>> Stashed changes
 
                 GameObject newTree = Instantiate(treePrefab, transform);
-                newTree.transform.position = newForestPoints[i];
+                newTree.transform.position = forestPoints[i];
                 newTree.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-<<<<<<< Updated upstream
-                
-                //newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
-
-                float randomScale = Random.Range(2f, 3f);
-                newTree.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
-                newTree.transform.position += transform.up * randomScale;
-                newTrees.Add(newTree);
-=======
-
                 newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
 
                 float randomScale = Random.Range(treeScaleMin, treeScaleMin);
                 newTree.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
                 newTree.transform.position += transform.up * randomScale * treeOffset;
->>>>>>> Stashed changes
             }
         }
     }

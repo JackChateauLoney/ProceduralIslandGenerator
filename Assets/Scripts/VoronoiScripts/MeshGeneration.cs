@@ -12,7 +12,7 @@ public class MeshGeneration : MonoBehaviour
     public GameObject voronoiParent = null;
 
     [SerializeField] Material terrainShader = null;
-    [SerializeField] float halfMapSize = 10f;
+    [SerializeField] float halfMapSize = 2000f;
 
     [Header("Biome probablility, should add up to 100")]
     [SerializeField] int grasslandChance = 50;
