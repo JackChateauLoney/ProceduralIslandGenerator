@@ -15,13 +15,15 @@ public class RegionBiome : MonoBehaviour
     };
 
     public BiomeType myBiome = BiomeType.Blank;
-
+    public float centreHeight = 0.0f;
+    [HideInInspector] public Vector3 originalCentreHeight = Vector3.zero;
 
     int XregionMax = 0, XregionMin = 9999, ZregionMax = 0, ZregionMin = 9999;
     [SerializeField] Material regionMat = null;
 
 
     [Header("Forest")]
+<<<<<<< Updated upstream
     [SerializeField] int treeAreaWidth = 200;
     [SerializeField] int treeAreaLength = 200;
     [SerializeField] int treeSpacing = 1;
@@ -33,17 +35,56 @@ public class RegionBiome : MonoBehaviour
 
     List<Vector3> forestPoints = new List<Vector3>();
     bool forestGenerated = false;
+=======
+    [SerializeField] GameObject treePrefab = null;
+    [SerializeField] int treeAreaWidth = 400;
+    [SerializeField] int treeAreaLength = 400;
+    [SerializeField] int treeSpacing = 7;
+    [SerializeField] int treeK = 120;
+    [SerializeField] float treeOffset = 1.5f;
+    [SerializeField] float treeScaleMin = 2f;
+    [SerializeField] float treeScaleMax = 3f;
+    [Space(10)]
+    [SerializeField] GameObject bushPrefab = null;
+    [SerializeField] int bushSpacing = 16;
+    [SerializeField] float bushOffset = 0.5f;
+    [SerializeField] float bushScaleMin = 1.2f;
+    [SerializeField] float bushScaleMax = 0.8f;
+>>>>>>> Stashed changes
 
+    List<Vector3> forestPoints = new List<Vector3>();
+    List<Vector3> bushPoints = new List<Vector3>();
 
     [Header("Field")]
-    [SerializeField] GameObject fieldDirtPrefab = null;
+    [SerializeField] int cropAreaWidth = 400;
+    [SerializeField] int cropAreaLength = 400;
+    [SerializeField] int cropSpacing = 12;
+    [SerializeField] int cropK = 120;
+    [SerializeField] float cropOffset = -0.5f;
+    [SerializeField] float cropScaleMin = 0.2f;
+    [SerializeField] float cropScaleMax = 1.0f;
     [SerializeField] GameObject[] cropPrefabs = null;
     [SerializeField] int[] chancePerCrop = null;
+    List<Vector3> cropPoints = new List<Vector3>();
 
     [Header("Town")]
     [SerializeField] GameObject centerObjectPrefab = null;
     [SerializeField] GameObject[] buildingPrefabs = null;
     [SerializeField] int[] chancePerBuilding = null;
+    [SerializeField] int buildingAreaWidth = 400;
+    [SerializeField] int buildingAreaLength = 400;
+    [SerializeField] int buildingSpacing = 25;
+    [SerializeField] int buildingK = 120;
+    [SerializeField] float buildingOffset = 0.0f;
+    [SerializeField] float buildingScaleMin = 0.2f;
+    [SerializeField] float buildingScaleMax = 1.0f;
+    List<Vector3> buildingPoints = new List<Vector3>();
+
+    List<Vector3> roadPoints = new List<Vector3>();
+    bool generatedTown = false;
+    bool roadGenerated = false;
+    int randPoint1 = 0;
+    int randPoint2 = 0;
 
     [Header("Mountain")]
     [SerializeField] GameObject rockPrefab = null;
@@ -93,6 +134,11 @@ public class RegionBiome : MonoBehaviour
             if (item.z < ZregionMin)
                 ZregionMin = (int)item.z;
         }
+
+        centreHeight = vertices[0].y;
+        originalCentreHeight = vertices[0];
+
+
 
 
         switch (myBiome)
@@ -162,22 +208,36 @@ public class RegionBiome : MonoBehaviour
         }
 
 
+        cropPoints = PoissonPoints(cropSpacing, cropK, cropAreaWidth, cropAreaLength, transform.position);
 
-        //TODO Make this scale to any number of prefabs ===================================================================================================================================
-        //randomly pick one of the crops
-        for (int i = 0; i < 200; i++)
+        for (int i = 0; i < Mathf.Min(1000, cropPoints.Count); i++)
         {
-            //spawn crop
-            GameObject tempCrop = Instantiate(cropPrefabs[0], transform);
-            Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
-            tempCrop.transform.position = new Vector3(centrePoint.x + Random.Range(-80, 80), 70, centrePoint.z + Random.Range(-80, 80));
-            PlaceObjectDown(tempCrop, 0.0f, true);
-            tempCrop.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+            RaycastHit hit;
+            if (Physics.Raycast(cropPoints[i], Vector3.down * 200, out hit, 200f))
+            {
+                //only spawn on this biome
+                if (hit.transform.gameObject != gameObject)
+                    continue;
 
+                cropPoints[i] = hit.point;
+
+                GameObject newCrop = Instantiate(cropPrefabs[0], transform);
+                newCrop.transform.position = cropPoints[i];
+                newCrop.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+
+                newCrop.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+
+                float randomScale = Random.Range(cropScaleMin, cropScaleMax);
+                newCrop.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                newCrop.transform.position += transform.up * randomScale * cropOffset;
+            }
         }
-
-
     }
+
+
+
+
+
 
     void GenerateMountain()
     {
@@ -201,6 +261,7 @@ public class RegionBiome : MonoBehaviour
 
 
 
+<<<<<<< Updated upstream
     private void OnDrawGizmos()
     {
         if (!forestGenerated)
@@ -216,16 +277,29 @@ public class RegionBiome : MonoBehaviour
 
 
 
+=======
+>>>>>>> Stashed changes
     void GenerateForest()
     {
         //delete contents of biome
         MakeBlank();
 
+        forestPoints = PoissonPoints(treeSpacing, treeK, treeAreaWidth, treeAreaLength, transform.position);
+        bushPoints = PoissonPoints(bushSpacing, treeK, treeAreaWidth, treeAreaLength, transform.position);
 
+        //place bushes
+        for (int i = 0; i < Mathf.Min(100, bushPoints.Count); i++)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(bushPoints[i], Vector3.down * 200, out hit, 200f))
+            {
+                //only spawn bushes on this biome
+                if (hit.transform.gameObject != gameObject)
+                    continue;
 
-        PoissonDiscSampling pds = new PoissonDiscSampling();
-        Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
+                bushPoints[i] = hit.point;
 
+<<<<<<< Updated upstream
         //generate points with poisson disc sampling starting at current regions centre
         forestPoints = pds.GeneratePoints(treeSpacing, treeK, treeAreaWidth, treeAreaLength, transform.position);
         List<Vector3> newForestPoints = new List<Vector3>();
@@ -244,18 +318,47 @@ public class RegionBiome : MonoBehaviour
             newForestPoints[i] += centrePoint + Vector3.up * 120;
             newForestPoints[i] -= new Vector3(treeAreaWidth / 2, 0, treeAreaLength / 2);
         }
+=======
+                GameObject newBush = Instantiate(bushPrefab, transform);
+                newBush.transform.position = bushPoints[i];
+                newBush.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
 
+                newBush.transform.Rotate(new Vector3(-90, Random.Range(0, 360), 0));
+>>>>>>> Stashed changes
 
+                float randomScale = Random.Range(bushScaleMin, bushScaleMax);
+                newBush.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                newBush.transform.position += transform.up * randomScale * bushOffset;
+            }
+        }
+
+<<<<<<< Updated upstream
         for (int i = 0; i < Mathf.Min(100, newForestPoints.Count); i++)
+=======
+        //place trees
+        for (int i = 0; i < Mathf.Min(1000, forestPoints.Count); i++)
+>>>>>>> Stashed changes
         {
+            if (Random.Range(0, 10) == 1)
+                continue;
+
             RaycastHit hit;
             if (Physics.Raycast(newForestPoints[i], Vector3.down * 200, out hit, 200f))
             {
+<<<<<<< Updated upstream
                 newForestPoints[i] = hit.point;
+=======
+                //only spawn trees on this biome
+                if (hit.transform.gameObject != gameObject)
+                    continue;
+
+                forestPoints[i] = hit.point;
+>>>>>>> Stashed changes
 
                 GameObject newTree = Instantiate(treePrefab, transform);
                 newTree.transform.position = newForestPoints[i];
                 newTree.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+<<<<<<< Updated upstream
                 
                 //newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
 
@@ -263,11 +366,30 @@ public class RegionBiome : MonoBehaviour
                 newTree.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
                 newTree.transform.position += transform.up * randomScale;
                 newTrees.Add(newTree);
+=======
+
+                newTree.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+
+                float randomScale = Random.Range(treeScaleMin, treeScaleMin);
+                newTree.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                newTree.transform.position += transform.up * randomScale * treeOffset;
+>>>>>>> Stashed changes
             }
         }
-        forestGenerated = true;
     }
 
+
+
+    private void OnDrawGizmos()
+    {
+        if (generatedTown)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(roadPoints[0], (roadPoints[randPoint1] + roadPoints[randPoint1 - 1]) / 2);
+            Gizmos.DrawLine(roadPoints[0], (roadPoints[randPoint2] + roadPoints[randPoint2 - 1]) / 2);
+            Gizmos.color = Color.white;
+        }
+    }
 
     void GenerateTown()
     {
@@ -277,38 +399,59 @@ public class RegionBiome : MonoBehaviour
 
         //get centre of biome to place monument
         Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
-
         GameObject newCenterObject = Instantiate(centerObjectPrefab, transform);
         newCenterObject.transform.position = GetComponent<MeshFilter>().sharedMesh.vertices[0];
         newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x, 90, newCenterObject.transform.position.z);
-
         PlaceObjectDown(newCenterObject, -0.2f, false);
 
-        //TODO Make this scale to any number of prefabs ===================================================================================================================================
-        //randomly pick one of the buildings
-        for (int i = 0; i < 10; i++)
+        //first road point
+        roadPoints.Clear();
+        roadPoints.Add(centrePoint);
+
+        //draw road to edge of biome
+        Vector3[] edgePoints = GetComponent<MeshFilter>().sharedMesh.vertices;
+
+        for (int i = 0; i < edgePoints.Length; i++)
+            roadPoints.Add(edgePoints[i]);
+
+
+        if (!roadGenerated)
         {
-            int selectedPrefab = 0;
-            int num = Random.Range(0, 100);
-            if (num <= chancePerBuilding[0])
-            {
-                selectedPrefab = 0;
-            }
-            else if (num <= chancePerBuilding[0] + chancePerBuilding[1])
-            {
-                selectedPrefab = 1;
-            }
-            else if (num <= chancePerBuilding[0] + chancePerBuilding[1] + chancePerBuilding[2])
-            {
-                selectedPrefab = 2;
-            }
+            //new road 
+            randPoint1 = Random.Range(2, roadPoints.Count);
+            randPoint2 = Random.Range(2, roadPoints.Count - 1);
+            if (randPoint2 == randPoint1)
+                randPoint2++;
+            roadGenerated = true;
+        }
+        generatedTown = true;
 
-            //spawn building
-            GameObject tempBuilding = Instantiate(buildingPrefabs[selectedPrefab], transform);
-            tempBuilding.transform.position = new Vector3(centrePoint.x + Random.Range(-80, 80), 70, centrePoint.z + Random.Range(-80, 80));
-            PlaceObjectDown(tempBuilding, 0.0f, true);
-            tempBuilding.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
 
+
+        //place buildings
+        buildingPoints = PoissonPoints(buildingSpacing, buildingK, buildingAreaWidth, buildingAreaLength, transform.position);
+
+        for (int i = 0; i < Mathf.Min(1000, buildingPoints.Count); i++)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(buildingPoints[i], Vector3.down * 200, out hit, 200f))
+            {
+                //only spawn on this biome
+                if (hit.transform.gameObject != gameObject)
+                    continue;
+
+                buildingPoints[i] = hit.point;
+
+                GameObject newBuilding = Instantiate(buildingPrefabs[0], transform);
+                newBuilding.transform.position = buildingPoints[i];
+                newBuilding.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+
+                newBuilding.transform.Rotate(new Vector3(0, Random.Range(0, 360), 0));
+
+                float randomScale = Random.Range(buildingScaleMin, buildingScaleMax);
+                newBuilding.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                newBuilding.transform.position += transform.up * randomScale * buildingOffset;
+            }
         }
     }
 
@@ -325,5 +468,31 @@ public class RegionBiome : MonoBehaviour
         }
     }
 
+
+
+    private List<Vector3> PoissonPoints(int spacing, int k, int areaWidth, int areaLength, Vector3 pos)
+    {
+        PoissonDiscSampling pds = new PoissonDiscSampling();
+        Vector3 centrePoint = GetComponent<MeshFilter>().sharedMesh.vertices[0];
+
+        //generate points with poisson disc sampling starting at current regions centre
+        List<Vector3> points = pds.GeneratePoints(spacing, k, areaWidth, areaLength, pos);
+        List<Vector3> newPoints = new List<Vector3>();
+
+        //remove extra points from poisson disc sampler
+        for (int i = 0; i < points.Count; i++)
+            if (points[i] != Vector3.zero)
+                newPoints.Add(points[i]);
+
+
+        //move to centre of biome
+        for (int i = 0; i < Mathf.Min(1000, newPoints.Count); i++)
+        {
+            newPoints[i] += centrePoint + Vector3.up * 120;
+            newPoints[i] -= new Vector3(areaWidth / 2, 0, areaLength / 2);
+        }
+
+        return newPoints;
+    }
 
 }

@@ -31,7 +31,7 @@ Material:
     - _BladeHeightRandom: 0.5
     - _BladeWidth: 0.2
     - _BladeWidthRandom: 0.15
-    - _TessellationUniform: 78
+    - _TessellationUniform: 64
     - _TranslucentGain: 1
     - _WindStrength: 0.22
     m_Colors:
