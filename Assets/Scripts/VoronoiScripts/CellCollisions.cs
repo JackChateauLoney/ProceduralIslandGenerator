@@ -6,7 +6,7 @@ public class CellCollisions : MonoBehaviour
 {
     Transform topLeft = null;
     Transform bottomRight = null;
-    GameObject voronoiParent = null;
+    GameObject islandParent = null;
 
 
 
@@ -28,8 +28,8 @@ public class CellCollisions : MonoBehaviour
         }
         else
         {
-            voronoiParent = transform.parent.GetComponent<MeshGeneration>().voronoiParent;
-            transform.parent = voronoiParent.transform;
+            islandParent = transform.parent.GetComponent<MeshGeneration>().islandParent;
+            transform.parent = islandParent.transform;
         }
 
 

@@ -9,7 +9,7 @@ public class MeshGeneration : MonoBehaviour
     [SerializeField] GameObject meshPrefabV = null;
     public Transform topLeft = null;
     public Transform bottomRight = null;
-    public GameObject voronoiParent = null;
+    public GameObject islandParent = null;
 
     [SerializeField] Material terrainShader = null;
     [SerializeField] float halfMapSize = 2000f;
@@ -42,17 +42,11 @@ public class MeshGeneration : MonoBehaviour
 
     List<Mesh> voronoiMeshes = new List<Mesh>();
 
-    public bool testGizmos = false;
+
+
     private void OnEnable()
     {
         generated = false;
-        testGizmos = false;
-    }
-
-
-    private void Start()
-    {
-        //GenerateTerrain();
     }
 
     public void GenerateTerrain()
@@ -90,55 +84,16 @@ public class MeshGeneration : MonoBehaviour
 
 
 
-
-    //void OnDrawGizmos()
-    //{
-    //    if (!generated)
-    //        return;
-
-    //    Gizmos.color = Color.green;
-    //    Gizmos.DrawSphere(delaunayPoints[0].v1.position + Vector3.up, 0.1f);
-    //    Gizmos.color = Color.white;
-
-
-    //    //show points within delaunay
-    //    for (int i = 1; i < delaunayPoints.Count; i++)
-    //    {
-    //        Gizmos.color = Color.yellow;
-    //        Gizmos.DrawSphere(delaunayPoints[i].v1.position + Vector3.up, 0.1f);
-    //        Gizmos.DrawSphere(delaunayPoints[i].v2.position + Vector3.up, 0.1f);
-    //        Gizmos.DrawSphere(delaunayPoints[i].v3.position + Vector3.up, 0.1f);
-    //    }
-
-    //    //show points
-    //    for (int i = 1; i < vertexes.Count; i++)
-    //    {
-    //        Gizmos.color = Color.blue;
-    //        Gizmos.DrawSphere(vertexes[i].position + Vector3.up * 2, 0.1f);
-    //        Gizmos.color = Color.white;
-    //    }
-
-
-
-            
-
-    //}
-
-
-
-
-
     void CreateShape()
     {
         for (int i = 0; i < activePoints.Count; i++)
             vertexes.Add(new Vertex(activePoints[i]));
 
 
-
         //create delaunay triangles
         delaunayPoints = DelaunayTriangulation.TriangulateByFlippingEdges(activePoints);
 
-
+        //randomise height of terrain
         for (int i = 0; i < delaunayPoints.Count; i++)
         {
             delaunayPoints[i].v1.position.y += Random.Range(9, 12);
@@ -259,10 +214,6 @@ public class MeshGeneration : MonoBehaviour
             
             voronoiMeshes.Add(triangleMesh);
         }
-
-        Debug.Log("v mesh count: " + voronoiMeshes.Count);
-
-        testGizmos = true;
 
         //create meshes for each region of voronoi
         for (int i = 0; i < voronoiMeshes.Count; i++)

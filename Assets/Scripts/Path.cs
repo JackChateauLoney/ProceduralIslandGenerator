@@ -168,7 +168,6 @@ public class Path
         if (i % 3 == 0 || autoSetControlPoints)
         {
             points[i] = pos;
-            Debug.Log("Points");
 
             if (autoSetControlPoints)
             {

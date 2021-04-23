@@ -23,7 +23,7 @@ public class BiomeRegionEditor : Editor
         if (GUILayout.Button("Reset Centre Height"))
             controller.SetCentreHeight(controller.originalCentreHeight.y);
 
-
+        EditorGUILayout.Space(20);
 
         base.OnInspectorGUI();
 

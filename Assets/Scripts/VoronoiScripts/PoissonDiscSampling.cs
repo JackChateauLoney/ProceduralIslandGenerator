@@ -137,16 +137,6 @@ public class PoissonDiscSampling
                 active.RemoveAt(randIndex);
             }
         }
-
-
-        //centre points around transform
-        //for (int i = 0; i < grid.Count; i++)
-        //{
-        //    grid[i] += new Vector3(width/2, 0 , height/2) - startingPos;
-        //    Debug.Log("grid: " + grid[i]);
-        //}
-
-
         return grid;
     }
 }

@@ -54,6 +54,7 @@ public class RegionBiome : MonoBehaviour
     List<Vector3> cropPoints = new List<Vector3>();
 
     [Header("Town")]
+    [SerializeField] GameObject pathPrefab = null;
     [SerializeField] GameObject centerObjectPrefab = null;
     [SerializeField] GameObject[] buildingPrefabs = null;
     [SerializeField] int[] chancePerBuilding = null;
@@ -358,6 +359,19 @@ public class RegionBiome : MonoBehaviour
         roadLine = Vector3.Lerp(roadPoints[randPoint1], roadPoints[randPoint1 - 1], 0.5f);
 
 
+        GameObject newPath = Instantiate(pathPrefab, transform);
+        newPath.transform.position = Vector3.Lerp(roadLine, centrePoint, 0.5f) + (roadLine - centrePoint).normalized * 20 + Vector3.up * 50;
+        newPath.transform.LookAt(centrePoint + Vector3.up * 50);
+        newPath.transform.Rotate(-transform.rotation.x, 0, -transform.rotation.z);
+        newPath.GetComponent<PathControl>().depth = Vector3.Distance(roadLine, centrePoint);
+        newPath.GetComponent<PathControl>().CreatePath();
+
+        PlaceBuildings();
+    }
+
+
+    void PlaceBuildings()
+    {
         Vector3 left = Vector3.Cross(roadLine - roadPoints[0], Vector3.up).normalized;
 
         buildingPoints.Clear();
@@ -390,14 +404,12 @@ public class RegionBiome : MonoBehaviour
                 {
                     newBuilding.transform.LookAt(newBuilding.transform.position - left, transform.up);
                     newBuilding.transform.Rotate(new Vector3(0, -90, 0));
-                    Debug.Log("i:" + i + " left: " + left);
                 }
                 else
                 {
                     newBuilding.transform.LookAt(newBuilding.transform.position + left, transform.up);
                     newBuilding.transform.Rotate(new Vector3(0, -90, 0));
                     //newBuilding.transform.Rotate(new Vector3(0, -left.y, 0));
-                    Debug.Log("i:" + i + " left: " + left);
                 }
 
                 float randomScale = Random.Range(buildingScaleMin, buildingScaleMax);

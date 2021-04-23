@@ -34,9 +34,9 @@ public class GenerationEditor : Editor
 
             int whileSafeCatch = 0;
 
-            while(creator.voronoiParent.transform.childCount > 0)
+            while(creator.islandParent.transform.childCount > 0)
             {
-                DestroyImmediate( creator.voronoiParent.transform.GetChild(0).gameObject);
+                DestroyImmediate( creator.islandParent.transform.GetChild(0).gameObject);
                 whileSafeCatch++;
 
                 //stop the while loop being infinite, just in case because this is in editor
@@ -47,6 +47,8 @@ public class GenerationEditor : Editor
                 }
             }
         }
+
+        EditorGUILayout.Space(20);
 
         base.OnInspectorGUI();
     }
