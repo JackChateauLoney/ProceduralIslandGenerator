@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class WaterPlaneGenerator : MonoBehaviour
 {
-    [SerializeField] float size = 1f;
-    [SerializeField] int gridSize = 16;
+    [SerializeField] float size = 4000f;
+    [SerializeField] int gridSize = 128;
 
     MeshFilter filter;
 

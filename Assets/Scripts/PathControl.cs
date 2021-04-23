@@ -10,12 +10,12 @@ public class PathControl : MonoBehaviour
     List<GameObject> stones = new List<GameObject>();
     List<Vector3> randPoints = new List<Vector3>();
 
-    [SerializeField] float numStones = 50;
+    [SerializeField] float numStones = 150;
     [SerializeField] float width = 13;
     [SerializeField] float height = 1;
     public float depth = 40;
-    [SerializeField] float stoneScaleMin = 9;
-    [SerializeField] float stoneScaleMax = 15;
+    [SerializeField] float stoneScaleMin = 3;
+    [SerializeField] float stoneScaleMax = 6;
 
     [HideInInspector] public bool showBox = false;
 
