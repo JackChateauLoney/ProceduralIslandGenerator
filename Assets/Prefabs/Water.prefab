@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3910c607afcd18948bd09cd6d46b6fb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 4000
+  size: 7000
   gridSize: 128
 --- !u!114 &807305434258281530
 MonoBehaviour:
@@ -111,4 +111,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   power: 5
   scale: 2
-  timeScale: 0.5
+  timeScale: 1

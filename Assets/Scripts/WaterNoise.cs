@@ -5,9 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter),typeof(MeshRenderer))]
 public class WaterNoise : MonoBehaviour
 {
-    [SerializeField] float power = 3;
-    [SerializeField] float scale = 1;
-    [SerializeField] float timeScale = 1;
+    [SerializeField] float power = 10;
+    [SerializeField] float scale = 2;
+    [SerializeField] float timeScale = 0.5f;
 
     float offsetX = 0;
     float offsetY = 0;

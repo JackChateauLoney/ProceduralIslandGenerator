@@ -138,7 +138,7 @@ Shader "Roystan/Grass"
 
 
 				triStream.Append(GenerateGrassVertex(pos, segmentWidth, segmentHeight, segmentForward, float2(0, t), transformMatrix));
-				triStream.Append(GenerateGrassVertex(pos, -segmentWidth, segmentHeight, segmentForward, float2(1, t), transformMatrix));
+				triStream.Append(GenerateGrassVertex(pos + float3(1,0,0), segmentWidth, segmentHeight, segmentForward, float2(1, t), transformMatrix));
 			}
 			triStream.Append(GenerateGrassVertex(pos, 0, height, forward, float2(0.5, 1), transformationMatrix));
 		}
