@@ -31,7 +31,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2078829805300454059}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 10.737, y: 0, z: 0}
 --- !u!20 &963194227
 Camera:
@@ -129,7 +129,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6459226738865516162}
-  - {fileID: 4567230770018206566}
   - {fileID: 963194228}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -153,9 +152,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.25
-  m_Height: 1.9
+  m_Height: 1.7764263
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.64700794, z: 0}
 --- !u!54 &2078829805300454060
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -192,36 +191,6 @@ MonoBehaviour:
   playerJumpForce: 35
   appliedForceMode: 1
   gravity: 6000
---- !u!1 &7964351384187146390
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4567230770018206566}
-  m_Layer: 0
-  m_Name: GunPos
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4567230770018206566
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7964351384187146390}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.56, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2078829805300454059}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2078829806429378001
 Animator:
   serializedVersion: 3
@@ -342,7 +311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 881b386336587a24b8cbe33c82ae5d8b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.931
+      value: -0.25000024
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 881b386336587a24b8cbe33c82ae5d8b, type: 3}
       propertyPath: m_LocalPosition.z

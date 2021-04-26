@@ -127,14 +127,14 @@ MonoBehaviour:
   centreHeight: 0
   originalCentreHeight: {x: 0, y: 0, z: 0}
   regionMat: {fileID: 2100000, guid: bc983064afdc993448fb99fc00429d42, type: 2}
-  treePrefab: {fileID: 5908034011355324956, guid: 62dbea7b78833c442a59ee3bd54358bf, type: 3}
+  treePrefab: {fileID: 2651216551089060981, guid: 62dbea7b78833c442a59ee3bd54358bf, type: 3}
   treeAreaWidth: 400
   treeAreaLength: 400
-  treeSpacing: 7
+  treeSpacing: 9
   treeK: 120
-  treeOffset: 1.5
-  treeScaleMin: 2
-  treeScaleMax: 3
+  treeOffset: 0
+  treeScaleMin: 1
+  treeScaleMax: 2
   bushPrefab: {fileID: 7145321185461636659, guid: d142b5f74366c384f9067f963a6e8ff7, type: 3}
   bushSpacing: 16
   bushOffset: 0

@@ -66,7 +66,7 @@ public class RegionBiome : MonoBehaviour
     [SerializeField] float buildingSideOffset = 20.0f;
     [SerializeField] float buildingScaleMin = 0.2f;
     [SerializeField] float buildingScaleMax = 1.0f;
-    Vector3 roadLine = Vector3.zero;
+    List<Vector3> roadLine = new List<Vector3>();
     List<Vector3> buildingPoints = new List<Vector3>();
 
     List<Vector3> roadPoints = new List<Vector3>();
@@ -313,8 +313,14 @@ public class RegionBiome : MonoBehaviour
         if (generatedTown)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(roadPoints[0], roadLine);
-            Gizmos.DrawLine(roadPoints[0], roadLine);
+            Gizmos.DrawLine(roadPoints[0], roadLine[0]);
+            Gizmos.DrawLine(roadPoints[0], roadLine[0]);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
+            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(roadPoints[0], roadLine[2]);
+            Gizmos.DrawLine(roadPoints[0], roadLine[2]);
             Gizmos.color = Color.white;
         }
     }
@@ -333,17 +339,18 @@ public class RegionBiome : MonoBehaviour
         newCenterObject.transform.position = new Vector3(newCenterObject.transform.position.x, 90, newCenterObject.transform.position.z);
         PlaceObjectDown(newCenterObject, -0.2f, false);
 
+
+
         //first road point
         roadPoints.Clear();
         roadPoints.Add(centrePoint);
 
         //draw road to edge of biome
         Vector3[] edgePoints = GetComponent<MeshFilter>().sharedMesh.vertices;
-
         for (int i = 0; i < edgePoints.Length; i++)
             roadPoints.Add(edgePoints[i]);
 
-
+        //generate path for road to edge of biome
         if (!roadGenerated)
         {
             //new road 
@@ -353,18 +360,21 @@ public class RegionBiome : MonoBehaviour
                 randPoint2++;
             roadGenerated = true;
         }
+
+        roadLine.Clear();
+        roadLine.Add(Vector3.Lerp(roadPoints[2], roadPoints[1], 0.5f));
+        roadLine.Add(Vector3.Lerp(roadPoints[5], roadPoints[4], 0.5f));
+        roadLine.Add(Vector3.Lerp(roadPoints[8], roadPoints[6], 0.5f));
         generatedTown = true;
 
-
-        roadLine = Vector3.Lerp(roadPoints[randPoint1], roadPoints[randPoint1 - 1], 0.5f);
-
-
         GameObject newPath = Instantiate(pathPrefab, transform);
-        newPath.transform.position = Vector3.Lerp(roadLine, centrePoint, 0.5f) + (roadLine - centrePoint).normalized * 20 + Vector3.up * 50;
+        newPath.transform.position = Vector3.Lerp(roadLine[0], centrePoint, 0.5f) + (roadLine[0] - centrePoint).normalized * 20 + Vector3.up * 50;
         newPath.transform.LookAt(centrePoint + Vector3.up * 50);
         newPath.transform.Rotate(-transform.rotation.x, 0, -transform.rotation.z);
-        newPath.GetComponent<PathControl>().depth = Vector3.Distance(roadLine, centrePoint);
+        newPath.GetComponent<PathControl>().depth = Vector3.Distance(roadLine[0], centrePoint);
         newPath.GetComponent<PathControl>().CreatePath();
+
+
 
         PlaceBuildings();
     }
@@ -372,49 +382,54 @@ public class RegionBiome : MonoBehaviour
 
     void PlaceBuildings()
     {
-        Vector3 left = Vector3.Cross(roadLine - roadPoints[0], Vector3.up).normalized;
 
-        buildingPoints.Clear();
-        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.25f) + left * buildingSideOffset);
-        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.5f) + left * buildingSideOffset);
-        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.75f) + left * buildingSideOffset);
-
-        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.34f) - left * buildingSideOffset);
-        buildingPoints.Add(Vector3.Lerp(roadLine, roadPoints[0], 0.67f) - left * buildingSideOffset);
-
-
-        //place buildings
-
-        for (int i = 0; i < buildingPoints.Count; i++)
+        for (int j = 0; j < roadLine.Count; j++)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(buildingPoints[i] + Vector3.up * 150, Vector3.down * 200, out hit, 200f))
+            Debug.Log("Place buildings j: " + j);
+            Vector3 left = Vector3.Cross(roadLine[j] - roadPoints[j], Vector3.up).normalized;
+
+            buildingPoints.Clear();
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.25f) + left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.5f) + left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.75f) + left * buildingSideOffset);
+
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.34f) - left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.67f) - left * buildingSideOffset);
+
+
+            //place buildings
+
+            for (int i = 0; i < buildingPoints.Count; i++)
             {
-                //only spawn on this biome
-                if (hit.transform.gameObject != gameObject)
-                    continue;
-
-                buildingPoints[i] = hit.point;
-
-                GameObject newBuilding = Instantiate(buildingPrefabs[0], transform);
-                newBuilding.transform.position = buildingPoints[i];
-                newBuilding.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-
-                if (i < 3)
+                RaycastHit hit;
+                if (Physics.Raycast(buildingPoints[i] + Vector3.up * 150, Vector3.down * 200, out hit, 200f))
                 {
-                    newBuilding.transform.LookAt(newBuilding.transform.position - left, transform.up);
-                    newBuilding.transform.Rotate(new Vector3(0, -90, 0));
-                }
-                else
-                {
-                    newBuilding.transform.LookAt(newBuilding.transform.position + left, transform.up);
-                    newBuilding.transform.Rotate(new Vector3(0, -90, 0));
-                    //newBuilding.transform.Rotate(new Vector3(0, -left.y, 0));
-                }
+                    //only spawn on this biome
+                    if (hit.transform.gameObject != gameObject)
+                        continue;
 
-                float randomScale = Random.Range(buildingScaleMin, buildingScaleMax);
-                newBuilding.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
-                newBuilding.transform.position += transform.up * randomScale * buildingOffset;
+                    buildingPoints[i] = hit.point;
+
+                    GameObject newBuilding = Instantiate(buildingPrefabs[0], transform);
+                    newBuilding.transform.position = buildingPoints[i];
+                    newBuilding.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+
+                    if (i < 3)
+                    {
+                        newBuilding.transform.LookAt(newBuilding.transform.position - left, transform.up);
+                        newBuilding.transform.Rotate(new Vector3(0, -90, 0));
+                    }
+                    else
+                    {
+                        newBuilding.transform.LookAt(newBuilding.transform.position + left, transform.up);
+                        newBuilding.transform.Rotate(new Vector3(0, -90, 0));
+                        //newBuilding.transform.Rotate(new Vector3(0, -left.y, 0));
+                    }
+
+                    float randomScale = Random.Range(buildingScaleMin, buildingScaleMax);
+                    newBuilding.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                    newBuilding.transform.position += transform.up * randomScale * buildingOffset;
+                }
             }
         }
     }
