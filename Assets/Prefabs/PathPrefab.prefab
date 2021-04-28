@@ -114,12 +114,12 @@ MonoBehaviour:
   pathInteractionMask:
     serializedVersion: 2
     m_Bits: 64
-  numStones: 150
+  numStones: 75
   width: 13
   height: 1
   depth: 40
-  stoneScaleMin: 3
-  stoneScaleMax: 6
+  stoneScaleMin: 6
+  stoneScaleMax: 9
   showBox: 0
 --- !u!54 &671803940753656655
 Rigidbody:

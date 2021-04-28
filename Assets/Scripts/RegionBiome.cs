@@ -315,12 +315,9 @@ public class RegionBiome : MonoBehaviour
             Gizmos.color = Color.yellow;
             Gizmos.DrawLine(roadPoints[0], roadLine[0]);
             Gizmos.DrawLine(roadPoints[0], roadLine[0]);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
-            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(roadPoints[0], roadLine[2]);
-            Gizmos.DrawLine(roadPoints[0], roadLine[2]);
+            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
+            Gizmos.DrawLine(roadPoints[0], roadLine[1]);
             Gizmos.color = Color.white;
         }
     }
@@ -362,9 +359,9 @@ public class RegionBiome : MonoBehaviour
         }
 
         roadLine.Clear();
-        roadLine.Add(Vector3.Lerp(roadPoints[2], roadPoints[1], 0.5f));
-        roadLine.Add(Vector3.Lerp(roadPoints[5], roadPoints[4], 0.5f));
-        roadLine.Add(Vector3.Lerp(roadPoints[8], roadPoints[6], 0.5f));
+        roadLine.Add(Vector3.Lerp(roadPoints[1], roadPoints[2], 0.5f));
+        //roadLine.Add(Vector3.Lerp(roadPoints[8], roadPoints[7], 0.5f));
+        roadLine.Add(Vector3.Lerp(roadPoints[roadPoints.Count - 1], roadPoints[roadPoints.Count - 2], 0.5f));
         generatedTown = true;
 
         GameObject newPath = Instantiate(pathPrefab, transform);
@@ -374,6 +371,12 @@ public class RegionBiome : MonoBehaviour
         newPath.GetComponent<PathControl>().depth = Vector3.Distance(roadLine[0], centrePoint);
         newPath.GetComponent<PathControl>().CreatePath();
 
+        GameObject newPath2 = Instantiate(pathPrefab, transform);
+        newPath2.transform.position = Vector3.Lerp(roadLine[1], centrePoint, 0.5f) + (roadLine[1] - centrePoint).normalized * 20 + Vector3.up * 50;
+        newPath2.transform.LookAt(centrePoint + Vector3.up * 50);
+        newPath2.transform.Rotate(-transform.rotation.x, 0, -transform.rotation.z);
+        newPath2.GetComponent<PathControl>().depth = Vector3.Distance(roadLine[1], centrePoint);
+        newPath2.GetComponent<PathControl>().CreatePath();
 
 
         PlaceBuildings();
@@ -386,15 +389,15 @@ public class RegionBiome : MonoBehaviour
         for (int j = 0; j < roadLine.Count; j++)
         {
             Debug.Log("Place buildings j: " + j);
-            Vector3 left = Vector3.Cross(roadLine[j] - roadPoints[j], Vector3.up).normalized;
+            Vector3 left = Vector3.Cross(roadLine[j] - roadPoints[0], Vector3.up).normalized;
 
             buildingPoints.Clear();
-            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.25f) + left * buildingSideOffset);
-            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.5f) + left * buildingSideOffset);
-            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.75f) + left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[0], 0.25f) + left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[0], 0.5f) + left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[0], 0.75f) + left * buildingSideOffset);
 
-            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.34f) - left * buildingSideOffset);
-            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[j], 0.67f) - left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[0], 0.34f) - left * buildingSideOffset);
+            buildingPoints.Add(Vector3.Lerp(roadLine[j], roadPoints[0], 0.67f) - left * buildingSideOffset);
 
 
             //place buildings
