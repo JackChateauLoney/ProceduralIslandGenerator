@@ -72,9 +72,12 @@ public class MeshGeneration : MonoBehaviour
         for (int i = 0; i < activePoints.Count; i++)
             activePoints[i] += new Vector3(islandWidth / 2, 0, islandLength / 2) - transform.position;
 
-
+        var temp = Time.realtimeSinceStartup;
 
         CreateShape();
+        print("Time for MyExpensiveFunction: " + (Time.realtimeSinceStartup - temp).ToString("f6"));
+        print("Voronoi point count: " + voronoiCells.Count);
+
         UpdateMesh();
 
         generated = true;
@@ -186,10 +189,10 @@ public class MeshGeneration : MonoBehaviour
                 Vector3 p2 = c.edges[j].v2;
 
                 //ensure points are valid
-                if(float.IsNaN(p2.x) || float.IsNaN(p2.y) || float.IsNaN(p2.z))
-                    p2 = new Vector3(1,1,1);
-                if(float.IsNaN(p3.x) || float.IsNaN(p3.y) || float.IsNaN(p3.z))
-                    p3 = new Vector3(1,1,1);
+                if (float.IsNaN(p2.x) || float.IsNaN(p2.y) || float.IsNaN(p2.z))
+                    p2 = new Vector3(1, 1, 1);
+                if (float.IsNaN(p3.x) || float.IsNaN(p3.y) || float.IsNaN(p3.z))
+                    p3 = new Vector3(1, 1, 1);
 
                 vertices.Add(p2);
                 vertices.Add(p3);
@@ -211,7 +214,7 @@ public class MeshGeneration : MonoBehaviour
             triangleMesh.triangles = triangles.ToArray();
 
             triangleMesh.RecalculateNormals();
-            
+
             voronoiMeshes.Add(triangleMesh);
         }
 
